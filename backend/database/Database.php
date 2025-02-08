@@ -14,7 +14,7 @@ class Database {
         if ($_SERVER['SERVER_NAME'] === 'localhost') {
             // Credenciales para local
             $this->host = 'localhost';
-            $this->db = 'ecommersewol'; 
+            $this->db = 'ecommerse'; 
             $this->user = 'root';
             $this->pass = '';
         } else {
