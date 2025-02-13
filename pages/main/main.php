@@ -12,40 +12,40 @@
       Homepage v5 - Modern Design eCommerce HTML Template - FreshCart
     </title>
     <link
-      href="dist/assets/libs/tiny-slider/dist/tiny-slider.css"
+      href="./../../dist/assets/libs/tiny-slider/./../../tiny-slider.css"
       rel="stylesheet"
     />
     <link
-      href="dist/assets/libs/slick-carousel/slick/slick.css"
+      href="./../../dist/assets/libs/slick-carousel/slick/slick.css"
       rel="stylesheet"
     />
     <link
-      href="dist/assets/libs/slick-carousel/slick/slick-theme.css"
+      href="./../../dist/assets/libs/slick-carousel/slick/slick-theme.css"
       rel="stylesheet"
     />
     <!-- Favicon icon-->
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="dist/assets/images/favicon/favicon.ico"
+      href="./../../dist/assets/images/favicon/favicon.ico"
     />
 
     <!-- Libs CSS -->
     <link
-      href="dist/assets/libs/bootstrap-icons/font/bootstrap-icons.min.css"
+      href="./../../dist/assets/libs/bootstrap-icons/font/bootstrap-icons.min.css"
       rel="stylesheet"
     />
     <link
-      href="dist/assets/libs/feather-webfont/dist/feather-icons.css"
+      href="./../../dist/assets/libs/feather-webfont/./../../feather-icons.css"
       rel="stylesheet"
     />
     <link
-      href="dist/assets/libs/simplebar/dist/simplebar.min.css"
+      href="./../../dist/assets/libs/simplebar/./../../simplebar.min.css"
       rel="stylesheet"
     />
 
     <!-- Theme CSS -->
-    <link rel="stylesheet" href="dist/assets/css/theme.min.css" />
+    <link rel="stylesheet" href="./../../dist/assets/css/theme.min.css" />
   </head>
 
   <body>
@@ -115,9 +115,9 @@
           <div
             class="col-xl-2 col-md-3 mb-4 mb-md-0 col-12 text-center text-md-start"
           >
-            <a href="dist/index.html"
+            <a href="./../../index.html"
               ><img
-                src="dist/assets/images/logo/logo.png"
+                src="./../../dist/assets/images/logo/logo.png"
                 alt="Plantilla HTML de comercio electrónico" width="80px"
             /></a>
           </div>
@@ -183,23 +183,9 @@
                   </div>
                 </div>
               </div>
+             
               <div class="ms-6 text-center">
-                <a
-                  href="#"
-                  class="text-reset"
-                  data-bs-toggle="modal"
-                  data-bs-target="#userModal"
-                >
-                  <div class="lh-1">
-                    <div class="mb-2">
-                      <i class="bi bi-person-circle fs-4"></i>
-                    </div>
-                    <p class="mb-0 d-none d-xl-block small">Iniciar Sesion</p>
-                  </div>
-                </a>
-              </div>
-              <div class="ms-6 text-center">
-                <a href="dist/pages/account-orders.html" class="text-reset">
+                <a href="./../../pages/account-orders.html" class="text-reset">
                   <div class="lh-1">
                     <div class="mb-2">
                       <i class="bi bi-archive fs-4"></i>
@@ -245,7 +231,7 @@
           <div class="offcanvas-header pb-1">
             <a href="./index.html">
               <img
-                src="dist/assets/images/logo/logo.png"
+                src="./../../dist/assets/images/logo/logo.png"
                 alt="Logo eCommerce de Comestibles" width="50px"
               />
             </a>
@@ -421,14 +407,14 @@
                 <div class="col-6 col-md-6 col-lg-7">
                   <div class="d-flex">
                     <img
-                      src="dist/assets/images/products/product-img-1.jpg"
+                      src="./../../dist/assets/images/products/product-img-1.jpg"
                       alt="Ecommerce"
                       class="icon-shape icon-xxl"
                     />
                     <div class="ms-3">
                       <!-- title -->
                       <a
-                        href="dist/pages/shop-single.html"
+                        href="./../../pages/shop-single.html"
                         class="text-inherit"
                       >
                         <h6 class="mb-0">Haldiram's Sev Bhujia</h6>
@@ -504,13 +490,13 @@
                 <div class="col-6 col-md-6 col-lg-7">
                   <div class="d-flex">
                     <img
-                      src="dist/assets/images/products/product-img-2.jpg"
+                      src="./../../dist/assets/images/products/product-img-2.jpg"
                       alt="Ecommerce"
                       class="icon-shape icon-xxl"
                     />
                     <div class="ms-3">
                       <a
-                        href="dist/pages/shop-single.html"
+                        href="./../../pages/shop-single.html"
                         class="text-inherit"
                       >
                         <h6 class="mb-0">NutriChoice Digestive</h6>
@@ -590,14 +576,14 @@
                 <div class="col-6 col-md-6 col-lg-7">
                   <div class="d-flex">
                     <img
-                      src="dist/assets/images/products/product-img-3.jpg"
+                      src="./../../dist/assets/images/products/product-img-3.jpg"
                       alt="Ecommerce"
                       class="icon-shape icon-xxl"
                     />
                     <div class="ms-3">
                       <!-- title -->
                       <a
-                        href="dist/pages/shop-single.html"
+                        href="./../../pages/shop-single.html"
                         class="text-inherit"
                       >
                         <h6 class="mb-0">Cadbury 5 Star Chocolate</h6>
@@ -677,7 +663,7 @@
                 <div class="col-6 col-md-6 col-lg-7">
                   <div class="d-flex">
                     <img
-                      src="dist/assets/images/products/product-img-4.jpg"
+                      src="./../../dist/assets/images/products/product-img-4.jpg"
                       alt="Ecommerce"
                       class="icon-shape icon-xxl"
                     />
@@ -685,7 +671,7 @@
                       <!-- title -->
                       <!-- title -->
                       <a
-                        href="dist/pages/shop-single.html"
+                        href="./../../pages/shop-single.html"
                         class="text-inherit"
                       >
                         <h6 class="mb-0">Onion Flavour Potato</h6>
@@ -765,14 +751,14 @@
                 <div class="col-6 col-md-6 col-lg-7">
                   <div class="d-flex">
                     <img
-                      src="dist/assets/images/products/product-img-5.jpg"
+                      src="./../../dist/assets/images/products/product-img-5.jpg"
                       alt="Ecommerce"
                       class="icon-shape icon-xxl"
                     />
                     <div class="ms-3">
                       <!-- title -->
                       <a
-                        href="dist/pages/shop-single.html"
+                        href="./../../pages/shop-single.html"
                         class="text-inherit"
                       >
                         <h6 class="mb-0">Salted Instant Popcorn</h6>
@@ -855,6 +841,8 @@
       </div>
     </div>
     <!-- Modal -->
+
+     <!-- Modal 
     <div
       class="modal fade"
       id="userModal"
@@ -862,6 +850,8 @@
       aria-labelledby="userModalLabel"
       aria-hidden="true"
     >
+
+
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content p-4">
         <div class="modal-header border-0">
@@ -871,7 +861,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="loginForm"> <!-- Eliminamos action y method -->
+          <form id="loginForm"> <!-- Eliminamos action y method 
             <div class="mb-3">
               <label for="usuario" class="form-label">Usuario</label>
               <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required />
@@ -885,8 +875,8 @@
             <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
           </form>
         </div>
-      </div>
-    </div>
+      </div> 
+    </div> -->
     
     
     
@@ -958,9 +948,9 @@
             <div>
               <h6 class="px-4 border-bottom py-3 mb-0">Notification</h6>
               <p class="mb-0 px-4 py-3">
-                <a href="dist/pages/signin.html">Sign in</a>
+                <a href="./../../pages/signin.html">Sign in</a>
                 or
-                <a href="dist/pages/signup.html">Register</a>
+                <a href="./../../pages/signup.html">Register</a>
                 in or so you don t have to enter your details every time
               </p>
             </div>
@@ -995,7 +985,7 @@
           </a>
         </div>
         <div class="w-25 ms-2 py-4 icon-hover">
-          <a href="dist/pages/account-orders.html" class="text-inherit">
+          <a href="./../../pages/account-orders.html" class="text-inherit">
             <div class="text-center">
               <div>
                 <svg
@@ -1072,7 +1062,7 @@
           <div class="hero-slider">
             <div
               style="
-                background: url(dist/assets/images/slider/hero-img-slider-1.jpg)
+                background: url(./../../dist/assets/images/slider/hero-img-slider-1.jpg)
                   no-repeat;
                 background-size: cover;
                 border-radius: 0.5rem;
@@ -1097,7 +1087,7 @@
             </div>
             <div
               style="
-                background: url(dist/assets/images/slider/hero-img-slider-2.jpg)
+                background: url(./../../dist/assets/images/slider/hero-img-slider-2.jpg)
                   no-repeat;
                 background-size: cover;
                 border-radius: 0.5rem;
@@ -1125,7 +1115,7 @@
             </div>
             <div
               style="
-                background: url(dist/assets/images/slider/hero-img-slider-3.jpg)
+                background: url(./../../dist/assets/images/slider/hero-img-slider-3.jpg)
                   no-repeat;
                 background-size: cover;
                 border-radius: 0.5rem;
@@ -2078,7 +2068,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-snack-munchies.jpg"
+                            src="./../../dist/assets/images/category/category-snack-munchies.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2119,7 +2109,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-dairy-bread-eggs.jpg"
+                            src="./../../dist/assets/images/category/category-dairy-bread-eggs.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2160,7 +2150,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-snack-munchies.jpg"
+                            src="./../../dist/assets/images/category/category-snack-munchies.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2201,7 +2191,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-tea-coffee-drinks.jpg"
+                            src="./../../dist/assets/images/category/category-tea-coffee-drinks.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2240,7 +2230,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-bakery-biscuits.jpg"
+                            src="./../../dist/assets/images/category/category-bakery-biscuits.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2281,7 +2271,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-atta-rice-dal.jpg"
+                            src="./../../dist/assets/images/category/category-atta-rice-dal.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2320,7 +2310,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-chicken-meat-fish.jpg"
+                            src="./../../dist/assets/images/category/category-chicken-meat-fish.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2361,7 +2351,7 @@
                         <!-- img -->
                         <a href="#"
                           ><img
-                            src="dist/assets/images/category/category-cleaning-essentials.jpg"
+                            src="./../../dist/assets/images/category/category-cleaning-essentials.jpg"
                             alt="Grocery Ecommerce Template"
                             class="mb-3"
                         /></a>
@@ -2442,7 +2432,7 @@
                             <!-- img -->
                             <a href="#"
                               ><img
-                                src="dist/assets/images/category/category-instant-food.jpg"
+                                src="./../../dist/assets/images/category/category-instant-food.jpg"
                                 alt="Grocery Ecommerce Template"
                                 class="mb-3"
                             /></a>
@@ -2485,7 +2475,7 @@
                             <!-- img -->
                             <a href="#"
                               ><img
-                                src="dist/assets/images/category/category-chicken-meat-fish.jpg"
+                                src="./../../dist/assets/images/category/category-chicken-meat-fish.jpg"
                                 alt="Grocery Ecommerce Template"
                                 class="mb-3"
                             /></a>
@@ -2574,7 +2564,7 @@
                     <!-- img -->
                     <div class="img-zoom">
                       <img
-                        src="dist/assets/images/blog/blog-img-1.jpg"
+                        src="./../../dist/assets/images/blog/blog-img-1.jpg"
                         alt=""
                         class="img-fluid rounded w-100"
                       />
@@ -2622,7 +2612,7 @@
                     <div class="img-zoom">
                       <!-- img -->
                       <img
-                        src="dist/assets/images/blog/blog-img-2.jpg"
+                        src="./../../dist/assets/images/blog/blog-img-2.jpg"
                         alt=""
                         class="img-fluid rounded w-100"
                       />
@@ -2670,7 +2660,7 @@
                     <!-- img -->
                     <div class="img-zoom">
                       <img
-                        src="dist/assets/images/blog/blog-img-3.jpg"
+                        src="./../../dist/assets/images/blog/blog-img-3.jpg"
                         alt=""
                         class="img-fluid rounded w-100"
                       />
@@ -2718,7 +2708,7 @@
                     <!-- img -->
                     <div class="img-zoom">
                       <img
-                        src="dist/assets/images/blog/blog-img-4.jpg"
+                        src="./../../dist/assets/images/blog/blog-img-4.jpg"
                         alt=""
                         class="img-fluid rounded w-100"
                       />
@@ -2794,12 +2784,12 @@
                     class="zoom"
                     onmousemove="zoom(event)"
                     style="
-                      background-image: url(dist/assets/images/products/product-single-img-1.jpg);
+                      background-image: url(./../../dist/assets/images/products/product-single-img-1.jpg);
                     "
                   >
                     <!-- img -->
                     <img
-                      src="dist/assets/images/products/product-single-img-1.jpg"
+                      src="./../../dist/assets/images/products/product-single-img-1.jpg"
                       alt=""
                     />
                   </div>
@@ -2808,12 +2798,12 @@
                       class="zoom"
                       onmousemove="zoom(event)"
                       style="
-                        background-image: url(dist/assets/images/products/product-single-img-2.jpg);
+                        background-image: url(./../../dist/assets/images/products/product-single-img-2.jpg);
                       "
                     >
                       <!-- img -->
                       <img
-                        src="dist/assets/images/products/product-single-img-2.jpg"
+                        src="./../../dist/assets/images/products/product-single-img-2.jpg"
                         alt=""
                       />
                     </div>
@@ -2823,12 +2813,12 @@
                       class="zoom"
                       onmousemove="zoom(event)"
                       style="
-                        background-image: url(dist/assets/images/products/product-single-img-3.jpg);
+                        background-image: url(./../../dist/assets/images/products/product-single-img-3.jpg);
                       "
                     >
                       <!-- img -->
                       <img
-                        src="dist/assets/images/products/product-single-img-3.jpg"
+                        src="./../../dist/assets/images/products/product-single-img-3.jpg"
                         alt=""
                       />
                     </div>
@@ -2838,12 +2828,12 @@
                       class="zoom"
                       onmousemove="zoom(event)"
                       style="
-                        background-image: url(dist/assets/images/products/product-single-img-4.jpg);
+                        background-image: url(./../../dist/assets/images/products/product-single-img-4.jpg);
                       "
                     >
                       <!-- img -->
                       <img
-                        src="dist/assets/images/products/product-single-img-4.jpg"
+                        src="./../../dist/assets/images/products/product-single-img-4.jpg"
                         alt=""
                       />
                     </div>
@@ -2856,7 +2846,7 @@
                       <div class="thumbnails-img">
                         <!-- img -->
                         <img
-                          src="dist/assets/images/products/product-single-img-1.jpg"
+                          src="./../../dist/assets/images/products/product-single-img-1.jpg"
                           alt=""
                         />
                       </div>
@@ -2865,7 +2855,7 @@
                       <div class="thumbnails-img">
                         <!-- img -->
                         <img
-                          src="dist/assets/images/products/product-single-img-2.jpg"
+                          src="./../../dist/assets/images/products/product-single-img-2.jpg"
                           alt=""
                         />
                       </div>
@@ -2874,7 +2864,7 @@
                       <div class="thumbnails-img">
                         <!-- img -->
                         <img
-                          src="dist/assets/images/products/product-single-img-3.jpg"
+                          src="./../../dist/assets/images/products/product-single-img-3.jpg"
                           alt=""
                         />
                       </div>
@@ -2883,7 +2873,7 @@
                       <div class="thumbnails-img">
                         <!-- img -->
                         <img
-                          src="dist/assets/images/products/product-single-img-4.jpg"
+                          src="./../../dist/assets/images/products/product-single-img-4.jpg"
                           alt=""
                         />
                       </div>
@@ -3028,7 +3018,7 @@
           <div class="col-8 col-md-12 col-lg-4">
             <a href="#"
               ><img
-                src="dist/assets/images/logo/freshcart-white-logo.svg"
+                src="./../../dist/assets/images/logo/freshcart-white-logo.svg"
                 alt=""
             /></a>
           </div>
@@ -3272,31 +3262,31 @@
                 <li class="list-inline-item text-light">Payment Partners</li>
                 <li class="list-inline-item">
                   <a href="#!"
-                    ><img src="dist/assets/images/payment/amazonpay.svg" alt=""
+                    ><img src="./../../dist/assets/images/payment/amazonpay.svg" alt=""
                   /></a>
                 </li>
                 <li class="list-inline-item">
                   <a href="#!"
                     ><img
-                      src="dist/assets/images/payment/american-express.svg"
+                      src="./../../dist/assets/images/payment/american-express.svg"
                       alt=""
                   /></a>
                 </li>
                 <li class="list-inline-item">
                   <a href="#!"
                     ><img
-                      src="dist/assets/images/payment//mastercard.svg"
+                      src="./../../dist/assets/images/payment//mastercard.svg"
                       alt=""
                   /></a>
                 </li>
                 <li class="list-inline-item">
                   <a href="#!"
-                    ><img src="dist/assets/images/payment/paypal.svg" alt=""
+                    ><img src="./../../dist/assets/images/payment/paypal.svg" alt=""
                   /></a>
                 </li>
                 <li class="list-inline-item">
                   <a href="#!"
-                    ><img src="dist/assets/images/payment/visa.svg" alt=""
+                    ><img src="./../../dist/assets/images/payment/visa.svg" alt=""
                   /></a>
                 </li>
               </ul>
@@ -3308,82 +3298,28 @@
 
     <!-- Javascript-->
     <!-- Libs JS -->
-    <!-- <script src="dist/assets/libs/jquery/dist/jquery.min.js"></script> -->
-    <script src="dist/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="dist/assets/libs/simplebar/dist/simplebar.min.js"></script>
+    <!-- <script src="./../../dist/assets/libs/jquery/./../../jquery.min.js"></script> -->
+    <script src="./../../dist/assets/libs/bootstrap/./../../js/bootstrap.bundle.min.js"></script>
+    <script src="./../../dist/assets/libs/simplebar/./../../simplebar.min.js"></script>
 
     <!-- Theme JS -->
-    <script src="dist/assets/js/theme.min.js"></script>
+    <script src="./../../dist/assets/js/theme.min.js"></script>
 
-    <script src="dist/assets/js/vendors/jquery.min.js"></script>
-    <script src="dist/assets/libs/slick-carousel/slick/slick.min.js"></script>
-    <script src="dist/assets/js/vendors/slick-slider.js"></script>
-    <script src="dist/assets/libs/tiny-slider/dist/min/tiny-slider.js"></script>
-    <script src="dist/assets/js/vendors/tns-slider.js"></script>
-    <script src="dist/assets/js/vendors/zoom.js"></script>
+    <script src="./../../dist/assets/js/vendors/jquery.min.js"></script>
+    <script src="./../../dist/assets/libs/slick-carousel/slick/slick.min.js"></script>
+    <script src="./../../dist/assets/js/vendors/slick-slider.js"></script>
+    <script src="./../../dist/assets/libs/tiny-slider/./../../min/tiny-slider.js"></script>
+    <script src="./../../dist/assets/js/vendors/tns-slider.js"></script>
+    <script src="./../../dist/assets/js/vendors/zoom.js"></script>
 
-    <script src="dist/assets/js/vendors/countdown.js"></script>
-    <script src="dist/assets/libs/sticky-sidebar/dist/sticky-sidebar.min.js"></script>
-    <script src="dist/assets/js/vendors/sticky.js"></script>
-    <script src="dist/assets/js/vendors/modal.js"></script>
+    <script src="./../../dist/assets/js/vendors/countdown.js"></script>
+    <script src="./../../dist/assets/libs/sticky-sidebar/./../../sticky-sidebar.min.js"></script>
+    <script src="./../../dist/assets/js/vendors/sticky.js"></script>
+    <script src="./../../dist/assets/js/vendors/modal.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-    document.getElementById("loginForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Evita que la página se recargue y muestre datos en la URL
-    
-        let usuario = document.getElementById("usuario").value.trim();
-        let contrasena = document.getElementById("contrasena").value.trim();
-    
-        if (usuario === "" || contrasena === "") {
-            Swal.fire({
-                icon: "error",
-                title: "Todos los campos son obligatorios.",
-                showConfirmButton: false,
-                timer: 2500
-            });
-            return;
-        }
-    
-        // Crear objeto FormData para enviar los datos de manera segura
-        let formData = new FormData();
-        formData.append("usuario", usuario);
-        formData.append("contrasena", contrasena);
-    
-        // Enviar datos a login.php con fetch()
-        fetch("./backend/controllers/login/login.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json()) // Convertir la respuesta en JSON
-        .then(data => {
-            Swal.fire({
-                icon: data.status === "success" ? "success" : "error",
-                title: data.message,
-                showConfirmButton: false,
-                timer: 2500
-            });
-    
-            // Si el login es correcto, redirigir después de 2.5 segundos
-            if (data.status === "success") {
-                setTimeout(() => {
-                    window.location.href = "./pages/main/main.php"; // Redirigir al dashboard
-                }, 2500);
-            }
-        })
-        .catch(error => {
-            console.error("Error en el login:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Error inesperado. Inténtalo de nuevo.",
-                showConfirmButton: false,
-                timer: 2500
-            });
-        });
-    });
-    </script>
-    
+  
     
 
 
