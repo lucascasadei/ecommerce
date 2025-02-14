@@ -1,3 +1,22 @@
+<?php
+require_once '../../backend/database/Database.php';
+
+$database = new Database();
+$pdo = $database->getConnection();
+
+// Obtener los productos con precio mayor a 0 desde la base de datos
+$stmt = $pdo->prepare("SELECT id, codigo_generico, descripcion, ruta_imagen, precio 
+                       FROM articulos 
+                       WHERE precio > 0 
+                       ORDER BY id DESC 
+                       LIMIT 8");
+$stmt->execute();
+$articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$database->closeConnection();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -861,7 +880,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="loginForm"> <!-- Eliminamos action y method 
+          <form id="loginForm"> Eliminamos action y method 
             <div class="mb-3">
               <label for="usuario" class="form-label">Usuario</label>
               <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required />
@@ -2411,108 +2430,67 @@
                           
               </div>
 <!-- COMIENZO ARTICULOS -->           
-              <div class="row">
-                <div class="col-12">
-                  <div class="row align-items-center mb-6">
-                    <div class="col-xl-10 col-lg-9 col-8">
-                      <div class="mb-4 mb-lg-0">
-                        <h3 class="mb-1">Nuestros Productos</h3>
-                        <p class="mb-0">New products with updated stocks.</p>
-                      </div>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-4 text-end">
-                      <a href="#" class="btn btn-light">View All</a>
-                    </div>
-                  </div>
-                  <div class="row row-cols-xl-4 row-cols-lg-3 g-4">
-                    <div class="col">
-                      <div class="mb-6">
-                        <div class="card card-product mb-4">
-                          <div class="card-body text-center py-8">
-                            <!-- img -->
-                            <a href="#"
-                              ><img
-                                src="./../../dist/assets/images/category/category-instant-food.jpg"
-                                alt="Grocery Ecommerce Template"
-                                class="mb-3"
-                            /></a>
-                            <!-- text -->
-                          </div>
-                        </div>
-                        <div>
-                          <span class="badge bg-danger rounded-pill">-45%</span>
-                          <h2 class="mt-3 fs-6">
-                            <a href="#" class="text-inherit">Instant Food</a>
-                          </h2>
-                          <div>
-                            <span class="text-dark fs-5 fw-bold">$18</span>
-                            <span
-                              class="text-decoration-line-through text-muted"
-                              >$24</span
-                            >
-                          </div>
-                          <div class="text-warning">
-                            <!-- rating -->
-                            <small>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-half"></i>
-                            </small>
-                            <span class="text-muted small">4.5</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- item -->
-                    
-                    <div class="col">
-                      <div class="mb-6">
-                        <!-- card -->
-                        <div class="card card-product mb-4">
-                          <div class="card-body text-center py-8">
-                            <!-- img -->
-                            <a href="#"
-                              ><img
-                                src="./../../dist/assets/images/category/category-chicken-meat-fish.jpg"
-                                alt="Grocery Ecommerce Template"
-                                class="mb-3"
-                            /></a>
-                            <!-- text -->
-                          </div>
-                        </div>
-                        <div>
-                          <span class="badge bg-danger rounded-pill">-45%</span>
-                          <h2 class="mt-3 fs-6">
-                            <a href="#" class="text-inherit"
-                              >Salted Instant Popcorn</a
-                            >
-                          </h2>
-                          <div>
-                            <span class="text-dark fs-5 fw-bold">$18</span>
-                            <span
-                              class="text-decoration-line-through text-muted"
-                              >$24</span
-                            >
-                          </div>
-                          <div class="text-warning">
-                            <!-- rating -->
-                            <small>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-half"></i>
-                            </small>
-                            <span class="text-muted small">4.5</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+<div class="row">
+    <div class="col-12">
+        <div class="row align-items-center mb-6">
+            <div class="col-xl-10 col-lg-9 col-8">
+                <div class="mb-4 mb-lg-0">
+                    <h3 class="mb-1">Nuestros Productos</h3>
+                    <p class="mb-0">Nuevos productos con stock actualizado.</p>
                 </div>
-              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-4 text-end">
+                <a href="ver_todos.php" class="btn btn-light">Ver Todos</a>
+            </div>
+        </div>
+
+        <div class="row row-cols-xl-4 row-cols-lg-3 g-4">
+            <?php foreach ($articulos as $articulo): ?>
+                <div class="col">
+                    <div class="mb-6">
+                        <!-- Tarjeta del producto -->
+                        <div class="card card-product mb-4">
+                            <div class="card-body text-center py-8">
+                                <!-- Imagen del producto -->
+                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
+                                    <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>"
+                                        alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
+                                        class="mb-3 img-fluid"
+                                        style="height: 200px; object-fit: cover;">
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Información del producto -->
+                        <div>
+                            <h2 class="mt-3 fs-6">
+                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>" class="text-inherit">
+                                    <?= htmlspecialchars($articulo['descripcion']); ?>
+                                </a>
+                            </h2>
+                            <div>
+                                <span class="text-dark fs-5 fw-bold">
+                                    $<?= number_format($articulo['precio'], 2, ',', '.'); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
+            <?php if (empty($articulos)): ?>
+                <div class="col-12 text-center">
+                    <p>No hay productos disponibles.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Botón para ver más productos -->
+        <div class="text-center mt-4">
+            <a href="ver_todos.php" class="btn btn-primary">Ver Más Productos</a>
+        </div>
+    </div>
+</div>
 <!-- FIN ARTICULOS -->
               
             </div>
