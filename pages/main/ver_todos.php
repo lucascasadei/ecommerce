@@ -112,16 +112,15 @@ $database->closeConnection();
                                                 </div>
 
                                                 <div>
-                                                    <a href="#!" class="btn btn-primary btn-sm">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" 
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
-                                                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
-                                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                        </svg>
-                                                        Agregar
-                                                    </a>
-                                                </div>
+    <button class="btn btn-primary btn-sm agregar-carrito" data-id="<?= $articulo['id']; ?>">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Agregar
+    </button>
+</div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -185,5 +184,35 @@ $database->closeConnection();
             }
         });
     </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const botonesAgregar = document.querySelectorAll(".agregar-carrito");
+
+    botonesAgregar.forEach(boton => {
+        boton.addEventListener("click", function () {
+            const idArticulo = this.getAttribute("data-id");
+
+            fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `accion=agregar&idArticulo=${idArticulo}&cantidad=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("✅ Artículo agregado al carrito.");
+                } else {
+                    alert("⚠️ Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});
+</script>
+
 </body>
 </html>
