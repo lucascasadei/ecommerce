@@ -18,8 +18,8 @@ if (!empty($articulosCarrito) && is_array($articulosCarrito)) {
         $totalSubtotal += $subtotalItem;
     }
 }
-$envio = 5.00;
-$total = $totalSubtotal + $envio;
+
+$total = $totalSubtotal;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -83,7 +83,7 @@ $total = $totalSubtotal + $envio;
                         </ul>
                         <div class="d-flex justify-content-between mt-4">
                             <a href="../main/ver_todos.php" class="btn btn-primary">Seguir Comprando</a>
-                            <a href="checkout.php" class="btn btn-dark">Proceder al Pago</a>
+                            <!-- <a href="checkout.php" class="btn btn-dark">Proceder al Pago</a> -->
                         </div>
 
                     </div>
@@ -96,16 +96,15 @@ $total = $totalSubtotal + $envio;
                                 <span>Subtotal</span>
                                 <strong>$<?php echo number_format($totalSubtotal, 2); ?></strong>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Envío</span>
-                                <strong>$<?php echo number_format($envio, 2); ?></strong>
-                            </li>
+
                             <li class="list-group-item d-flex justify-content-between fw-bold">
                                 <span>Total</span>
                                 <strong>$<?php echo number_format($total, 2); ?></strong>
                             </li>
                         </ul>
-                        <a href="checkout.php" class="btn btn-success w-100 mt-3">Finalizar Compra</a>
+                        <a href="#" class="btn btn-success w-100 mt-3" onclick="finalizarCompra()">Finalizar Compra</a>
+
+
                     </div>
                 </div>
             </div>
@@ -145,9 +144,12 @@ $total = $totalSubtotal + $envio;
         let cantidadElemento = document.getElementById("cantidad-" + id);
         let cantidadActual = parseInt(cantidadElemento.textContent);
 
-        // Evitar que la cantidad sea menor a 1
         let nuevaCantidad = cantidadActual + cambio;
-        if (nuevaCantidad < 1) return;
+
+        if (nuevaCantidad < 1) {
+            eliminarArticulo(id); // ✅ Si la cantidad es 0, eliminar el artículo
+            return;
+        }
 
         // Actualizar visualmente antes de enviar la petición
         cantidadElemento.textContent = nuevaCantidad;
@@ -164,6 +166,28 @@ $total = $totalSubtotal + $envio;
                 }
             }).then(response => response.json())
             .then(data => location.reload());
+    }
+
+    function finalizarCompra() {
+        fetch('../../backend/controllers/carrito/carrito_controller.php', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    accion: 'finalizarCompra'
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.success);
+                    window.location.href = "pedido_confirmado.php?pedido=" + data
+                    .pedidoId; // Redirigir a la página de confirmación
+                } else {
+                    alert(data.error);
+                }
+            });
     }
     </script>
 </body>

@@ -93,13 +93,14 @@ public function obtenerCarrito() {
         SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, a.ruta_imagen, cd.estado 
         FROM carrito_detalle cd
         JOIN articulos a ON cd.idArticulo = a.id
-        WHERE cd.idCarrito = ?
+        WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
     ");
     $stmt->execute([$carritoId]);
     $articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($articulos); // 🔹 Devuelve la cantidad en JSON
+    echo json_encode($articulos); // 🔹 Devuelve solo los artículos pendientes en JSON
 }
+
 
 // ✅ Nueva función que devuelve el carrito en un array sin imprimir JSON
 public function obtenerCarritoArray() {
@@ -109,12 +110,66 @@ public function obtenerCarritoArray() {
         SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, a.ruta_imagen, cd.estado 
         FROM carrito_detalle cd
         JOIN articulos a ON cd.idArticulo = a.id
-        WHERE cd.idCarrito = ?
+        WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
     ");
     $stmt->execute([$carritoId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+public function finalizarCompra() {
+    try {
+        $this->pdo->beginTransaction(); // 🔹 Iniciar una transacción para evitar inconsistencias
+
+        $carritoId = $this->obtenerCarritoId();
+        
+        // Obtener los artículos del carrito que están en estado "pendiente"
+        $stmt = $this->pdo->prepare("
+            SELECT cd.idArticulo, cd.cantidad, a.precio 
+            FROM carrito_detalle cd
+            JOIN articulos a ON cd.idArticulo = a.id
+            WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
+        ");
+        $stmt->execute([$carritoId]);
+        $articulosCarrito = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($articulosCarrito)) {
+            echo json_encode(["error" => "⚠️ No hay artículos pendientes en el carrito."]);
+            return;
+        }
+
+        // Calcular total del pedido
+        $total = 0;
+        foreach ($articulosCarrito as $item) {
+            $total += $item['precio'] * $item['cantidad'];
+        }
+
+        // Configurar la zona horaria de Buenos Aires
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        $fechaBuenosAires = date('Y-m-d H:i:s'); // Obtener la fecha en el formato correcto
+
+        // Insertar nuevo pedido en la tabla `pedidos`
+        $stmt = $this->pdo->prepare("INSERT INTO pedidos (idUsuario, fecha, total) VALUES (?, ?, ?)");
+        $stmt->execute([$this->idUsuario, $fechaBuenosAires, $total]);
+        $pedidoId = $this->pdo->lastInsertId();
+
+        // Insertar los detalles del pedido en la tabla `pedido_detalle`
+        $stmt = $this->pdo->prepare("INSERT INTO pedido_detalle (idPedido, idArticulo, cantidad, precio) VALUES (?, ?, ?, ?)");
+        foreach ($articulosCarrito as $item) {
+            $stmt->execute([$pedidoId, $item['idArticulo'], $item['cantidad'], $item['precio']]);
+        }
+
+        // Actualizar los artículos en `carrito_detalle` para marcar su estado como "comprado"
+        $stmt = $this->pdo->prepare("UPDATE carrito_detalle SET estado = 'comprado' WHERE idCarrito = ? AND estado = 'pendiente'");
+        $stmt->execute([$carritoId]);
+
+        $this->pdo->commit(); // 🔹 Confirmar la transacción
+        echo json_encode(["success" => "✅ Compra finalizada correctamente.", "pedidoId" => $pedidoId]);
+
+    } catch (Exception $e) {
+        $this->pdo->rollBack(); // 🔹 Revertir la transacción si hay error
+        echo json_encode(["error" => "❌ Error al procesar la compra: " . $e->getMessage()]);
+    }
+}
 
     
 }
@@ -140,6 +195,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         case "obtener":
             $carrito->obtenerCarrito();
             break;
+        case "finalizarCompra":
+            $carrito->finalizarCompra();
+            break;
+                
+        
         default:
             echo json_encode(["error" => "Acción no válida."]);
     }
