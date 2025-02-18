@@ -9,7 +9,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 $carritoController = new CarritoController();
-$articulosCarrito = json_decode($carritoController->obtenerCarrito(), true);
+$articulosCarrito = $carritoController->obtenerCarritoArray(); // Ya es un array PHP
 
 $totalSubtotal = 0;
 if (!empty($articulosCarrito) && is_array($articulosCarrito)) {
@@ -23,12 +23,17 @@ $total = $totalSubtotal + $envio;
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Carrito de Compras - FreshCart</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="./../../dist/assets/css/theme.min.css" />
 </head>
+
 <body>
     <main class="mt-4">
         <div class="container">
@@ -40,35 +45,47 @@ $total = $totalSubtotal + $envio;
                             <?php if (!empty($articulosCarrito)) {
                                 foreach ($articulosCarrito as $item) {
                                     $subtotal = $item['precio'] * $item['cantidad']; ?>
-                                    <li class="list-group-item py-3 border-top">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-6 d-flex">
-                                                <img src="./../../dist/assets/images/products/<?php echo $item['ruta_imagen']; ?>" alt="<?php echo $item['descripcion']; ?>" class="img-fluid rounded me-3" width="80" />
-                                                <div>
-                                                    <h6 class="mb-0"><?php echo $item['descripcion']; ?></h6>
-                                                    <span class="text-muted">$<?php echo number_format($item['precio'], 2); ?></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input type="number" class="form-control" value="<?php echo $item['cantidad']; ?>" min="1" max="99" onchange="actualizarCantidad(<?php echo $item['idArticulo']; ?>, this.value)" />
-                                            </div>
-                                            <div class="col-md-2 text-end">
-                                                <span class="fw-bold">$<?php echo number_format($subtotal, 2); ?></span>
-                                            </div>
-                                            <div class="col-md-1 text-end">
-                                                <button class="btn btn-danger btn-sm" onclick="eliminarArticulo(<?php echo $item['idArticulo']; ?>)"><i class="bi bi-trash"></i></button>
-                                            </div>
+                            <li class="list-group-item py-3 border-top">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 d-flex">
+                                        <img src="./../../<?php echo $item['ruta_imagen']; ?>"
+                                            alt="<?php echo $item['descripcion']; ?>" class="img-fluid rounded me-3"
+                                            width="80" />
+                                        <div>
+                                            <h6 class="mb-0"><?php echo $item['descripcion']; ?></h6>
+                                            <span
+                                                class="text-muted">$<?php echo number_format($item['precio'], 2); ?></span>
                                         </div>
-                                    </li>
-                                <?php }
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-center">
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                            onclick="modificarCantidad(<?php echo $item['idArticulo']; ?>, -1)">-</button>
+                                        <span id="cantidad-<?php echo $item['idArticulo']; ?>"
+                                            class="mx-2"><?php echo $item['cantidad']; ?></span>
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                            onclick="modificarCantidad(<?php echo $item['idArticulo']; ?>, 1)">+</button>
+                                    </div>
+
+                                    <div class="col-md-2 text-end">
+                                        <span class="fw-bold">$<?php echo number_format($subtotal, 2); ?></span>
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button class="btn btn-danger btn-sm"
+                                            onclick="eliminarArticulo(<?php echo $item['idArticulo']; ?>)"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </li>
+                            <?php }
                             } else { ?>
-                                <li class="list-group-item text-center">El carrito está vacío.</li>
+                            <li class="list-group-item text-center">El carrito está vacío.</li>
                             <?php } ?>
                         </ul>
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="../index.php" class="btn btn-primary">Seguir Comprando</a>
+                            <a href="../main/ver_todos.php" class="btn btn-primary">Seguir Comprando</a>
                             <a href="checkout.php" class="btn btn-dark">Proceder al Pago</a>
                         </div>
+
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-5">
@@ -95,22 +112,60 @@ $total = $totalSubtotal + $envio;
         </div>
     </main>
     <script>
-        function eliminarArticulo(id) {
-            fetch('../../backend/controllers/carrito/carrito_controller.php', {
+    function eliminarArticulo(id) {
+        fetch('../../backend/controllers/carrito/carrito_controller.php', {
                 method: 'POST',
-                body: JSON.stringify({ accion: 'eliminar', idArticulo: id }),
-                headers: { 'Content-Type': 'application/json' }
+                body: new URLSearchParams({
+                    accion: 'eliminar',
+                    idArticulo: id
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             }).then(response => response.json())
-              .then(data => location.reload());
-        }
-        function actualizarCantidad(id, cantidad) {
-            fetch('../../backend/controllers/carrito/carrito_controller.php', {
+            .then(data => location.reload());
+    }
+
+    function actualizarCantidad(id, cantidad) {
+        fetch('../../backend/controllers/carrito/carrito_controller.php', {
                 method: 'POST',
-                body: JSON.stringify({ accion: 'actualizar', idArticulo: id, cantidad: cantidad }),
-                headers: { 'Content-Type': 'application/json' }
+                body: new URLSearchParams({
+                    accion: 'actualizar',
+                    idArticulo: id,
+                    cantidad: cantidad
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             }).then(response => response.json())
-              .then(data => location.reload());
-        }
+            .then(data => location.reload());
+    }
+
+    function modificarCantidad(id, cambio) {
+        let cantidadElemento = document.getElementById("cantidad-" + id);
+        let cantidadActual = parseInt(cantidadElemento.textContent);
+
+        // Evitar que la cantidad sea menor a 1
+        let nuevaCantidad = cantidadActual + cambio;
+        if (nuevaCantidad < 1) return;
+
+        // Actualizar visualmente antes de enviar la petición
+        cantidadElemento.textContent = nuevaCantidad;
+
+        fetch('../../backend/controllers/carrito/carrito_controller.php', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    accion: 'actualizar',
+                    idArticulo: id,
+                    cantidad: nuevaCantidad
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(response => response.json())
+            .then(data => location.reload());
+    }
     </script>
 </body>
+
 </html>

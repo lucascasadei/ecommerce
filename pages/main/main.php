@@ -214,14 +214,8 @@ $database->closeConnection();
                 </a>
               </div>
               <div class="text-center ms-6">
-                <a
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#offcanvasRight"
-                  href="#offcanvasExample"
-                  role="button"
-                  aria-controls="offcanvasRight"
-                  class="text-reset"
-                >
+              <a href="../carrito/carrito.php" class="text-reset">
+
                   <div class="text-center">
                     <div>
                       <i class="bi bi-cart2 fs-4"></i>

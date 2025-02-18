@@ -23,6 +23,7 @@ $database->closeConnection();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@ $database->closeConnection();
 
 <body>
 
- 
+
 
     <main>
         <div class="mt-4">
@@ -58,9 +59,9 @@ $database->closeConnection();
                             <select id="filtroGrupo" class="form-control">
                                 <option value="">Todos</option>
                                 <?php foreach ($grupos as $grupo): ?>
-                                    <option value="<?= htmlspecialchars($grupo['ordenamiento1']); ?>">
-                                        <?= htmlspecialchars($grupo['ordenamiento1']); ?>
-                                    </option>
+                                <option value="<?= htmlspecialchars($grupo['ordenamiento1']); ?>">
+                                    <?= htmlspecialchars($grupo['ordenamiento1']); ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
 
@@ -68,69 +69,71 @@ $database->closeConnection();
                             <select id="filtroSubgrupo" class="form-control">
                                 <option value="">Todos</option>
                                 <?php foreach ($subgrupos as $subgrupo): ?>
-                                    <option value="<?= htmlspecialchars($subgrupo['ordenamiento2']); ?>">
-                                        <?= htmlspecialchars($subgrupo['ordenamiento2']); ?>
-                                    </option>
+                                <option value="<?= htmlspecialchars($subgrupo['ordenamiento2']); ?>">
+                                    <?= htmlspecialchars($subgrupo['ordenamiento2']); ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
 
                             <h5 class="mt-4 mb-3">Filtrar por Precio</h5>
-                            <input type="range" id="filtroPrecio" class="form-range" min="0" max="100000" step="500" value="100000">
+                            <input type="range" id="filtroPrecio" class="form-range" min="0" max="100000" step="500"
+                                value="100000">
                             <p>Hasta: <span id="precioSeleccionado">100000</span></p>
                         </div>
                     </div>
 
                     <!-- Productos -->
                     <div class="col-lg-9">
-                        <div class="row g-4 row-cols-xl-5 row-cols-lg-3 row-cols-md-2 row-cols-2 mt-2" id="productosLista">
+                        <div class="row g-4 row-cols-xl-5 row-cols-lg-3 row-cols-md-2 row-cols-2 mt-2"
+                            id="productosLista">
                             <?php foreach ($articulos as $articulo): ?>
-                                <div class="col producto-item" 
-                                     data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>" 
-                                     data-subgrupo="<?= htmlspecialchars($articulo['ordenamiento2']); ?>" 
-                                     data-precio="<?= $articulo['precio']; ?>">
-                                    
-                                    <div class="card card-product">
-                                        <div class="card-body">
-                                            <div class="text-center position-relative">
-                                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
-                                                    <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>" 
-                                                        alt="<?= htmlspecialchars($articulo['descripcion']); ?>" 
-                                                        class="mb-3 img-fluid" 
-                                                        style="height: 200px; object-fit: cover;">
-                                                </a>
+                            <div class="col producto-item"
+                                data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
+                                data-subgrupo="<?= htmlspecialchars($articulo['ordenamiento2']); ?>"
+                                data-precio="<?= $articulo['precio']; ?>">
+
+                                <div class="card card-product">
+                                    <div class="card-body">
+                                        <div class="text-center position-relative">
+                                            <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
+                                                <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>"
+                                                    alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
+                                                    class="mb-3 img-fluid" style="height: 200px; object-fit: cover;">
+                                            </a>
+                                        </div>
+
+                                        <h2 class="fs-6">
+                                            <a href="ver_articulo.php?id=<?= $articulo['id']; ?>"
+                                                class="text-inherit text-decoration-none">
+                                                <?= htmlspecialchars($articulo['descripcion']); ?>
+                                            </a>
+                                        </h2>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div>
+                                                <span
+                                                    class="text-dark fs-5 fw-bold">$<?= number_format($articulo['precio'], 2, ',', '.'); ?></span>
                                             </div>
-
-                                            <h2 class="fs-6">
-                                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>" class="text-inherit text-decoration-none">
-                                                    <?= htmlspecialchars($articulo['descripcion']); ?>
-                                                </a>
-                                            </h2>
-
-                                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                                <div>
-                                                    <span class="text-dark fs-5 fw-bold">$<?= number_format($articulo['precio'], 2, ',', '.'); ?></span>
-                                                </div>
-
-                                                <div>
-    <button class="btn btn-primary btn-sm agregar-carrito" data-id="<?= $articulo['id']; ?>">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Agregar
-    </button>
-</div>
-
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-outline-primary btn-sm btn-disminuir"
+                                                    data-id="<?= $articulo['id']; ?>">-</button>
+                                                <span class="mx-2 cantidad-producto"
+                                                    data-id="<?= $articulo['id']; ?>">0</span>
+                                                <button class="btn btn-outline-primary btn-sm btn-aumentar"
+                                                    data-id="<?= $articulo['id']; ?>">+</button>
                                             </div>
                                         </div>
+
+
                                     </div>
                                 </div>
+                            </div>
                             <?php endforeach; ?>
 
                             <?php if (empty($articulos)): ?>
-                                <div class="col-12 text-center">
-                                    <p>No hay productos disponibles.</p>
-                                </div>
+                            <div class="col-12 text-center">
+                                <p>No hay productos disponibles.</p>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -139,7 +142,7 @@ $database->closeConnection();
         </div>
     </main>
 
-  
+
 
 
     <!-- JS del Template -->
@@ -148,62 +151,81 @@ $database->closeConnection();
     <script src="./../../dist/assets/js/theme.min.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const filtroGrupo = document.getElementById("filtroGrupo");
-            const filtroSubgrupo = document.getElementById("filtroSubgrupo");
-            const filtroPrecio = document.getElementById("filtroPrecio");
-            const precioSeleccionado = document.getElementById("precioSeleccionado");
-            const productosLista = document.getElementById("productosLista");
+document.addEventListener("DOMContentLoaded", function () {
+    // Elementos de filtro
+    const filtroGrupo = document.getElementById("filtroGrupo");
+    const filtroSubgrupo = document.getElementById("filtroSubgrupo");
+    const filtroPrecio = document.getElementById("filtroPrecio");
+    const precioSeleccionado = document.getElementById("precioSeleccionado");
+    const productosLista = document.getElementById("productosLista");
 
-            filtroPrecio.addEventListener("input", function () {
-                precioSeleccionado.textContent = this.value;
-                filtrarProductos();
-            });
+    // Función para filtrar productos dinámicamente
+    function filtrarProductos() {
+        const grupoSeleccionado = filtroGrupo.value.toLowerCase();
+        const subgrupoSeleccionado = filtroSubgrupo.value.toLowerCase();
+        const precioMaximo = parseFloat(filtroPrecio.value);
 
-            filtroGrupo.addEventListener("change", filtrarProductos);
-            filtroSubgrupo.addEventListener("change", filtrarProductos);
+        document.querySelectorAll(".producto-item").forEach(producto => {
+            const grupoProducto = producto.getAttribute("data-grupo") ? producto.getAttribute("data-grupo").toLowerCase() : "";
+            const subgrupoProducto = producto.getAttribute("data-subgrupo") ? producto.getAttribute("data-subgrupo").toLowerCase() : "";
+            const precioProducto = parseFloat(producto.getAttribute("data-precio"));
 
-            function filtrarProductos() {
-                const grupoSeleccionado = filtroGrupo.value.toLowerCase();
-                const subgrupoSeleccionado = filtroSubgrupo.value.toLowerCase();
-                const precioMaximo = parseFloat(filtroPrecio.value);
+            if ((grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
+                (subgrupoSeleccionado === "" || subgrupoProducto.includes(subgrupoSeleccionado)) &&
+                (precioProducto <= precioMaximo)) {
+                producto.style.display = "block";
+            } else {
+                producto.style.display = "none";
+            }
+        });
+    }
 
-                document.querySelectorAll(".producto-item").forEach(producto => {
-                    const grupoProducto = producto.getAttribute("data-grupo") ? producto.getAttribute("data-grupo").toLowerCase() : "";
-                    const subgrupoProducto = producto.getAttribute("data-subgrupo") ? producto.getAttribute("data-subgrupo").toLowerCase() : "";
-                    const precioProducto = parseFloat(producto.getAttribute("data-precio"));
+    // Eventos para los filtros
+    filtroPrecio.addEventListener("input", function () {
+        precioSeleccionado.textContent = this.value;
+        filtrarProductos();
+    });
 
-                    if ((grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
-                        (subgrupoSeleccionado === "" || subgrupoProducto.includes(subgrupoSeleccionado)) &&
-                        (precioProducto <= precioMaximo)) {
-                        producto.style.display = "block";
-                    } else {
-                        producto.style.display = "none";
+    filtroGrupo.addEventListener("change", filtrarProductos);
+    filtroSubgrupo.addEventListener("change", filtrarProductos);
+
+    // 🛒 Funcionalidad del carrito
+    function inicializarCarrito() {
+        fetch("../../backend/controllers/carrito/carrito_controller.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "accion=obtener"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    const cantidadElemento = document.querySelector(`.cantidad-producto[data-id="${item.idArticulo}"]`);
+                    if (cantidadElemento) {
+                        cantidadElemento.textContent = item.cantidad;
+                        mostrarControles(item.idArticulo, item.cantidad);
                     }
                 });
             }
-        });
-    </script>
+        })
+        .catch(error => console.error("Error obteniendo carrito:", error));
+    }
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const botonesAgregar = document.querySelectorAll(".agregar-carrito");
-
-    botonesAgregar.forEach(boton => {
+    // 🛒 Evento para agregar un producto al carrito
+    document.querySelectorAll(".btn-agregar").forEach(boton => {
         boton.addEventListener("click", function () {
             const idArticulo = this.getAttribute("data-id");
+            const parentDiv = this.parentElement;
 
             fetch("../../backend/controllers/carrito/carrito_controller.php", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: `accion=agregar&idArticulo=${idArticulo}&cantidad=1`
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("✅ Artículo agregado al carrito.");
+                    mostrarControles(idArticulo, 1);
                 } else {
                     alert("⚠️ Error: " + data.error);
                 }
@@ -211,8 +233,109 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error:", error));
         });
     });
+
+    // 🛒 Función para mostrar los botones "-" y "+" después de agregar un producto
+    function mostrarControles(idArticulo, cantidad) {
+        const parentDiv = document.querySelector(`.btn-agregar[data-id="${idArticulo}"]`)?.parentElement;
+        if (parentDiv) {
+            parentDiv.innerHTML = `
+                <button class="btn btn-outline-primary btn-sm btn-disminuir" data-id="${idArticulo}">-</button>
+                <span class="mx-2 cantidad-producto" data-id="${idArticulo}">${cantidad}</span>
+                <button class="btn btn-outline-primary btn-sm btn-aumentar" data-id="${idArticulo}">+</button>
+            `;
+            agregarEventosCantidad();
+        }
+    }
+
+    // 🛒 Función para manejar eventos de incremento y decremento
+    function agregarEventosCantidad() {
+        document.querySelectorAll(".btn-aumentar").forEach(boton => {
+            boton.addEventListener("click", function () {
+                const idArticulo = this.getAttribute("data-id");
+                const cantidadElemento = document.querySelector(`.cantidad-producto[data-id="${idArticulo}"]`);
+                let cantidadActual = parseInt(cantidadElemento.textContent, 10) || 0;
+                let nuevaCantidad = cantidadActual + 1;
+
+                // Verificar si el producto ya está en el carrito
+                fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `accion=obtener`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let enCarrito = data.some(item => item.idArticulo == idArticulo);
+                    let accion = enCarrito ? "actualizar" : "agregar";
+
+                    fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `accion=${accion}&idArticulo=${idArticulo}&cantidad=${nuevaCantidad}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            cantidadElemento.textContent = nuevaCantidad;
+                        } else {
+                            alert("⚠️ Error: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        });
+
+        document.querySelectorAll(".btn-disminuir").forEach(boton => {
+            boton.addEventListener("click", function () {
+                const idArticulo = this.getAttribute("data-id");
+                const cantidadElemento = document.querySelector(`.cantidad-producto[data-id="${idArticulo}"]`);
+                let cantidadActual = parseInt(cantidadElemento.textContent, 10) || 0;
+
+                if (cantidadActual > 1) {
+                    let nuevaCantidad = cantidadActual - 1;
+
+                    fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `accion=actualizar&idArticulo=${idArticulo}&cantidad=${nuevaCantidad}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            cantidadElemento.textContent = nuevaCantidad;
+                        } else {
+                            alert("⚠️ Error: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                } else {
+                    fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `accion=eliminar&idArticulo=${idArticulo}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            cantidadElemento.parentElement.innerHTML = `<button class="btn btn-primary btn-sm btn-agregar" data-id="${idArticulo}">+</button>`;
+                            agregarEventosCantidad();
+                        } else {
+                            alert("⚠️ Error: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                }
+            });
+        });
+    }
+
+    inicializarCarrito();
+    agregarEventosCantidad();
 });
+
 </script>
 
+
 </body>
+
 </html>
