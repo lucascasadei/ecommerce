@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/backend/database/Database.php';
+require_once __DIR__ . '/../../database/Database.php';
+
 session_start(); // Asegurar que la sesión está iniciada
 
 class PedidoController {
@@ -26,8 +27,8 @@ class PedidoController {
                     p.fecha,
                     p.total,
                     pd.idArticulo,
-                    a.nombre AS nombreArticulo,
                     a.descripcion,
+                      a.ruta_imagen, -- Se agrega el campo de la imagen
                     pd.cantidad AS cantidadPedida,
                     a.precio AS precioUnitario,
                     (pd.cantidad * a.precio) AS subtotal
