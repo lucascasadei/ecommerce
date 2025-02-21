@@ -2,7 +2,7 @@
 session_start();
 require_once '../../database/Database.php';
 
-header('Content-Type: application/json'); // Indicar que la respuesta será JSON
+header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = trim($_POST['usuario']);
@@ -17,22 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $db = new Database();
         $pdo = $db->getConnection();
 
-        $stmt = $pdo->prepare("SELECT id, codigo_cliente, usuario, contrasena, estado FROM usuarios WHERE usuario = :usuario");
+        $stmt = $pdo->prepare("SELECT id, usuario, contrasena, estado FROM usuarios WHERE usuario = :usuario");
         $stmt->bindParam(":usuario", $usuario);
         $stmt->execute();
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
             if (password_verify($contrasena, $user['contrasena'])) {
-                if ($user['estado'] === 'inactivo') {
-                    $updateStmt = $pdo->prepare("UPDATE usuarios SET estado = 'activo' WHERE id = :id");
-                    $updateStmt->bindParam(":id", $user['id']);
-                    $updateStmt->execute();
-                }
-
-                // Iniciar sesión
                 $_SESSION['usuario'] = $user['usuario'];
-                $_SESSION['codigo_cliente'] = $user['codigo_cliente'];
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['estado'] = 'activo';
 
@@ -51,4 +43,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
-?>
