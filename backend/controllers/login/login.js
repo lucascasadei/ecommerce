@@ -1,15 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
+        console.log("Formulario enviado, preventDefault ejecutado"); // Verificar si llega aquí
 
-        let formData = new FormData(this); // Toma los datos directamente del formulario
+        let formData = new FormData(this);
 
-        fetch("./login.php", {
+        // Ocultar el modal si está abierto
+        let modal = bootstrap.Modal.getInstance(document.querySelector("#loginModal"));
+        if (modal) modal.hide();
+
+        fetch("../../backend/controller/login.php", {
             method: "POST",
             body: formData
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Respuesta del servidor:", data);
+
             Swal.fire({
                 icon: data.status === "success" ? "success" : "error",
                 title: data.message,
@@ -18,11 +25,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (data.status === "success") {
                 setTimeout(() => {
-                    location.reload();
+                    window.location.href = "dashboard.php";
                 }, 2500);
             }
         })
         .catch(error => {
+            console.error("Error en el fetch:", error);
             Swal.fire({
                 icon: "error",
                 title: "Error inesperado.",
@@ -31,4 +39,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
