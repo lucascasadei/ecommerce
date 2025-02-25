@@ -1,6 +1,7 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();}
 $usuarioActivo = isset($_SESSION['usuario']);
 ?>
 
@@ -34,10 +35,9 @@ $usuarioActivo = isset($_SESSION['usuario']);
  ?>
 
 
-    <a href="<?php echo BASE_URL; ?>/index.php">
+<a href="<?php echo $usuarioActivo ? BASE_URL . '/pages/main/main.php' : BASE_URL . '/index.php'; ?>">
         <img src="<?php echo BASE_URL; ?>/dist/assets/images/logo/logo.png" alt="Logo" width="80px" />
     </a>
-
 
        </div>
 
@@ -83,16 +83,18 @@ $usuarioActivo = isset($_SESSION['usuario']);
                  </div>
                </a>
              </div>
-           <?php else: ?>
-             <div class="ms-6 text-center">
-               <a href="logout.php" class="text-reset">
-                 <div class="lh-1">
-                   <div class="mb-2"><i class="bi bi-box-arrow-right fs-4"></i></div>
-                   <p class="mb-0 d-none d-xl-block small">Cerrar Sesión</p>
-                 </div>
-               </a>
-             </div>
-           <?php endif; ?>
+             <?php else: ?>
+    <div class="ms-6 text-center">
+        <a href="#" class="text-reset btn-logout">
+            <div class="lh-1">
+                <div class="mb-2"><i class="bi bi-box-arrow-right fs-4"></i></div>
+                <p class="mb-0 d-none d-xl-block small">Cerrar Sesión</p>
+            </div>
+        </a>
+    </div>
+<?php endif; ?>
+
+
 
            <div class="ms-6 text-center">
              <a href="dist/pages/account-orders.html" class="text-reset">
@@ -115,3 +117,33 @@ $usuarioActivo = isset($_SESSION['usuario']);
      </div>
    </div>
  </header>
+<!-- Incluir SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const logoutBtn = document.querySelector(".btn-logout");
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "¿Seguro que quieres cerrar sesión?",
+                text: "Tendrás que volver a iniciar sesión para acceder.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "../header/logout.php";
+                }
+            });
+        });
+    }
+});
+</script>

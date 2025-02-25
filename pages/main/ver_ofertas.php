@@ -4,17 +4,36 @@ require_once '../../backend/database/Database.php';
 $database = new Database();
 $pdo = $database->getConnection();
 
-// Obtener grupos (ordenamiento1) y subgrupos (ordenamiento2) únicos
-$stmt_grupos = $pdo->prepare("SELECT DISTINCT ordenamiento1 FROM articulos WHERE ordenamiento1 IS NOT NULL ORDER BY ordenamiento1");
+// Obtener grupos (ordenamiento1) únicos solo para productos con 'KIT' en codigo_generico
+$stmt_grupos = $pdo->prepare("
+    SELECT DISTINCT ordenamiento1 
+    FROM articulos 
+    WHERE ordenamiento1 IS NOT NULL 
+    AND codigo_generico LIKE 'KIT%' 
+    ORDER BY ordenamiento1
+");
 $stmt_grupos->execute();
 $grupos = $stmt_grupos->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt_subgrupos = $pdo->prepare("SELECT DISTINCT ordenamiento2 FROM articulos WHERE ordenamiento2 IS NOT NULL ORDER BY ordenamiento2");
+// Obtener subgrupos (ordenamiento2) únicos solo para productos con 'KIT' en codigo_generico
+$stmt_subgrupos = $pdo->prepare("
+    SELECT DISTINCT ordenamiento2 
+    FROM articulos 
+    WHERE ordenamiento2 IS NOT NULL 
+    AND codigo_generico LIKE 'KIT%' 
+    ORDER BY ordenamiento2
+");
 $stmt_subgrupos->execute();
 $subgrupos = $stmt_subgrupos->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener productos con precio mayor a 0
-$stmt_productos = $pdo->prepare("SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 FROM articulos WHERE precio > 0 ORDER BY id DESC");
+// Obtener productos con precio mayor a 0 y cuyo codigo_generico empieza con 'KIT'
+$stmt_productos = $pdo->prepare("
+    SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 
+    FROM articulos 
+    WHERE precio > 0 
+    AND codigo_generico LIKE 'KIT%' 
+    ORDER BY id DESC
+");
 $stmt_productos->execute();
 $articulos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
 
@@ -120,7 +139,7 @@ $database->closeConnection();
                 </div>
             </div>
 
-            <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5" id="productosLista">
+            <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3"  id="productosLista">
                 <?php foreach ($articulos as $articulo): ?>
                     <div class="col producto-item"
                         data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
@@ -197,7 +216,7 @@ $database->closeConnection();
     const botonesVista = document.querySelectorAll(".view-toggle");
 
     // Configurar la vista inicial (5 columnas en pantallas grandes)
-    productosLista.classList.add("row-cols-2", "row-cols-md-3", "row-cols-xl-5");
+    productosLista.classList.add("row-cols-1", "row-cols-md-2", "row-cols-xl-3");
 
     botonesVista.forEach(boton => {
         boton.addEventListener("click", function() {

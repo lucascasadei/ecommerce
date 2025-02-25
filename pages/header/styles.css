@@ -1,0 +1,13 @@
+.btn-logout {
+    text-decoration: none; /* Quita subrayado */
+    border: none; /* Quita el borde */
+    background: none; /* Quita el fondo */
+    padding: 0; /* Elimina el padding */
+    display: inline-block; /* Asegura alineación correcta */
+    color: inherit; /* Usa el color del texto normal */
+    cursor: pointer; /* Mantiene el cursor de enlace */
+}
+
+.btn-logout:hover {
+    color: red; /* Opcional: cambiar color al pasar el mouse */
+}

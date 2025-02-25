@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 
 // Si el usuario tiene sesión activa, lo redirige a main.php
 if (isset($_SESSION['usuario'])) {
