@@ -97,7 +97,7 @@ $usuarioActivo = isset($_SESSION['usuario']);
 
 
            <div class="ms-6 text-center">
-             <a href="dist/pages/account-orders.html" class="text-reset">
+             <a href="./../main/verPedidos.php" class="text-reset">
                <div class="lh-1">
                  <div class="mb-2"><i class="bi bi-archive fs-4"></i></div>
                  <p class="mb-0 d-none d-xl-block small">Mis Pedidos</p>
@@ -105,7 +105,7 @@ $usuarioActivo = isset($_SESSION['usuario']);
              </a>
            </div>
            <div class="text-center ms-6">
-             <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" href="#offcanvasExample" role="button" aria-controls="offcanvasRight" class="text-reset">
+             <a  href="./../carrito/carrito.php" class="text-reset">
                <div class="text-center">
                  <div><i class="bi bi-cart2 fs-4"></i></div>
                  <p class="mb-0 d-none d-xl-block small">Carrito</p>

@@ -35,6 +35,8 @@ $total = $totalSubtotal;
 </head>
 
 <body>
+      <!-- navigation -->
+            <?php include '../header/header.php'; ?>
     <main class="mt-4">
         <div class="container">
             <div class="row">
@@ -169,26 +171,37 @@ $total = $totalSubtotal;
     }
 
     function finalizarCompra() {
-        fetch('../../backend/controllers/carrito/carrito_controller.php', {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Deseas confirmar tu pedido?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('../../backend/controllers/carrito/carrito_controller.php', {
                 method: 'POST',
-                body: new URLSearchParams({
-                    accion: 'finalizarCompra'
-                }),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                body: new URLSearchParams({ accion: 'finalizarCompra' }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.success);
-                    window.location.href = "pedido_confirmado.php?pedido=" + data
-                    .pedidoId; // Redirigir a la página de confirmación
+                    Swal.fire('Pedido Confirmado', data.success, 'success')
+                        .then(() => {
+                            window.location.href = "../main/verDetallePedidos.php?id=" + data.pedidoId;
+                        });
                 } else {
-                    alert(data.error);
+                    Swal.fire('Error', data.error, 'error');
                 }
             });
-    }
+        }
+    });
+}
+
     </script>
 </body>
 

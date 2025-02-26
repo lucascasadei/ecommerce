@@ -26,7 +26,10 @@ $pedidos = $pedidoController->obtenerPedidosUsuario($idUsuario);
    </head>
 
    <body>
-      <main>
+   <?php include '../header/header.php'; ?>
+
+      <main>    <!-- navigation -->
+     
          <div class="container mt-4">
             <!-- Breadcrumb -->
             <div class="row">

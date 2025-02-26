@@ -103,10 +103,10 @@ $database->closeConnection();
                     <button class="btn btn-outline-secondary me-2 view-toggle" data-view="list">
                         <i class="bi bi-list-ul"></i>
                     </button>
-                    <button class="btn btn-outline-secondary me-2 view-toggle active" data-view="grid">
+                    <button class="btn btn-outline-secondary me-2 view-toggle " data-view="grid">
                         <i class="bi bi-grid"></i>
                     </button>
-                    <button class="btn btn-outline-secondary view-toggle" data-view="grid-3">
+                    <button class="btn btn-outline-secondary view-toggle active" data-view="grid-3">
                         <i class="bi bi-grid-3x3-gap"></i>
                     </button>
                 </div>
@@ -120,7 +120,8 @@ $database->closeConnection();
                 </div>
             </div>
 
-            <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5" id="productosLista">
+            <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-3" id="productosLista">
+
                 <?php foreach ($articulos as $articulo): ?>
                     <div class="col producto-item"
                         data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
@@ -188,39 +189,41 @@ $database->closeConnection();
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Elementos de filtro
-        const filtroGrupo = document.getElementById("filtroGrupo");
-        const filtroSubgrupo = document.getElementById("filtroSubgrupo");
-        const filtroPrecio = document.getElementById("filtroPrecio");
-        const precioSeleccionado = document.getElementById("precioSeleccionado");
-        const productosLista = document.getElementById("productosLista");
+    const productosLista = document.getElementById("productosLista");
     const botonesVista = document.querySelectorAll(".view-toggle");
 
-    // Configurar la vista inicial (5 columnas en pantallas grandes)
-    productosLista.classList.add("row-cols-2", "row-cols-md-3", "row-cols-xl-5");
+    // Función para cambiar la vista
+    function cambiarVista(vista) {
+        // Elimina TODAS las clases de columnas
+        productosLista.classList.remove("row-cols-1", "row-cols-2", "row-cols-3", "row-cols-4", "row-cols-5", "row-cols-md-2", "row-cols-md-3", "row-cols-lg-3", "row-cols-lg-4", "row-cols-xl-5");
 
+        // Aplica la vista seleccionada
+        if (vista === "list") {
+            productosLista.classList.add("row-cols-1");
+        } else if (vista === "grid") {
+            productosLista.classList.add("row-cols-2", "row-cols-md-2");
+        } else if (vista === "grid-3") {
+            productosLista.classList.add("row-cols-3", "row-cols-md-3", "row-cols-lg-3");
+        }
+    }
+
+    // Aplicar vista predeterminada (3 columnas)
+    cambiarVista("grid-3");
+
+    // Evento para los botones de vista
     botonesVista.forEach(boton => {
         boton.addEventListener("click", function() {
             // Remover la clase 'active' de todos los botones y asignarla al botón seleccionado
             botonesVista.forEach(b => b.classList.remove("active"));
             this.classList.add("active");
 
-            // Obtener la vista seleccionada
+            // Obtener la vista seleccionada y aplicarla
             const vistaSeleccionada = this.dataset.view;
-
-            // Resetear clases de columnas
-            productosLista.classList.remove("row-cols-1", "row-cols-2", "row-cols-md-3", "row-cols-lg-4", "row-cols-xl-5");
-
-            // Aplicar las clases de Bootstrap correspondientes a la vista
-            if (vistaSeleccionada === "list") {
-                productosLista.classList.add("row-cols-1");
-            } else if (vistaSeleccionada === "grid") {
-                productosLista.classList.add("row-cols-2", "row-cols-md-2");
-            } else if (vistaSeleccionada === "grid-3") {
-               productosLista.classList.add("row-cols-3", "row-cols-md-3", "row-cols-lg-3", "row-cols-xl-3");
-            }
+            cambiarVista(vistaSeleccionada);
         });
     });
+
+
         // Función para filtrar productos dinámicamente
         function filtrarProductos() {
             const grupoSeleccionado = filtroGrupo.value.toLowerCase();

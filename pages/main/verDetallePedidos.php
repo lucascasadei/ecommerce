@@ -28,7 +28,10 @@ $detallesPedido = $pedidoController->obtenerPedido($idPedido, $idUsuario);
 </head>
 
 <body>
+            <!-- navigation -->
+            <?php include '../header/header.php'; ?>
     <main>
+    
         <div class="container mt-4">
             <!-- Breadcrumb -->
             <div class="row">

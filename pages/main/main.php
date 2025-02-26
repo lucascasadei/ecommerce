@@ -72,10 +72,10 @@ $database->closeConnection();
                     </a>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
                 </div>
-                <div class="offcanvas-body">
+               <!-- Categorías  <div class="offcanvas-body">
                     <div>
                         <ul class="navbar-nav align-items-center">
-                            <!-- Categorías -->
+                         
                             <li class="dropdown me-6 d-none d-lg-block">
                                 <a href="#" class="text-inherit" data-bs-toggle="dropdown" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -125,19 +125,19 @@ $database->closeConnection();
                                     </li>
                                 </ul>
                             </li>
-                            <!-- Ofertas -->
+                            <!-- Ofertas 
                             <li class="nav-item">
-                                <a class="nav-link" href="#ofertas">Ofertas</a>
+                                <a class="nav-link" href="./ver_ofertas.php">Ofertas</a>
                             </li>
-                            <!-- Tiendas -->
+                            <!-- Tiendas 
                             <li class="nav-item">
                                 <a class="nav-link" href="#tiendas">Nuestras Tiendas</a>
                             </li>
-                            <!-- Contacto -->
+                            <!-- Contacto 
                             <li class="nav-item">
                                 <a class="nav-link" href="#contacto">Contacto</a>
                             </li>
-                            <!-- Mi Cuenta -->
+                            <!-- Mi Cuenta 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
@@ -158,14 +158,15 @@ $database->closeConnection();
                                     </li>
                                 </ul>
                             </li>
-                            <!-- Carrito -->
+                           Carrito 
                             <li class="nav-item">
                                 <a class="nav-link" href="#carrito">
                                     <i class="bi bi-cart"></i> Carrito
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </div> 
+                -->
                 </div>
             </div>
         </div>
@@ -1449,12 +1450,12 @@ $database->closeConnection();
                 </div>
             </div>
         </div>
-
+           <!-- heading 
         <section class="my-lg-14 my-8">
             <div class="container">
                 <div class="row align-items-center mb-8">
                     <div class="col-md-8 col-12">
-                        <!-- heading -->
+             
                         <div class="d-flex">
                             <div class="mt-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
@@ -1476,24 +1477,24 @@ $database->closeConnection();
                             <div></div>
                         </div>
                     </div>
-                    <!-- button -->
+                  
                     <div class="col-md-4 text-end d-none d-md-block">
                         <a href="#" class="btn btn-primary">View all recipes</a>
                     </div>
                 </div>
                 <div class="row">
-                    <!-- col -->
+                 
                     <div class="col-12 col-md-6 col-lg-3 mb-8">
                         <div class="mb-4">
                             <a href="javascript:void(0)">
-                                <!-- img -->
+                     
                                 <div class="img-zoom">
                                     <img src="./../../dist/assets/images/blog/blog-img-1.jpg" alt=""
                                         class="img-fluid rounded w-100" />
                                 </div>
                             </a>
                         </div>
-                        <!-- text -->
+                
                         <div>
                             <h4 class="h5">
                                 <a href="javascript:void(0)" class="text-inherit">Spaghetti with Crispy Zucchini</a>
@@ -1518,18 +1519,18 @@ $database->closeConnection();
                             </div>
                         </div>
                     </div>
-                    <!-- col -->
+          
                     <div class="col-12 col-md-6 col-lg-3 mb-8">
                         <div class="mb-4">
                             <a href="javascript:void(0)">
                                 <div class="img-zoom">
-                                    <!-- img -->
+                        ->
                                     <img src="./../../dist/assets/images/blog/blog-img-2.jpg" alt=""
                                         class="img-fluid rounded w-100" />
                                 </div>
                             </a>
                         </div>
-                        <!-- text -->
+            
                         <div>
                             <h4 class="h5">
                                 <a href="javascript:void(0)" class="text-inherit">Almond Butter Chocolate Chip Zucchini
@@ -1555,18 +1556,18 @@ $database->closeConnection();
                             </div>
                         </div>
                     </div>
-                    <!-- col -->
+                  
                     <div class="col-12 col-md-6 col-lg-3 mb-8">
                         <div class="mb-4">
                             <a href="javascript:void(0)">
-                                <!-- img -->
+                               
                                 <div class="img-zoom">
                                     <img src="./../../dist/assets/images/blog/blog-img-3.jpg" alt=""
                                         class="img-fluid rounded w-100" />
                                 </div>
                             </a>
                         </div>
-                        <!-- text -->
+                       
                         <div>
                             <h4 class="h5">
                                 <a href="javascript:void(0)" class="text-inherit">Spicy Shrimp Tacos Garlic Cilantro
@@ -1592,11 +1593,11 @@ $database->closeConnection();
                             </div>
                         </div>
                     </div>
-                    <!-- col -->
+                   
                     <div class="col-12 col-md-6 col-lg-3 mb-8">
                         <div class="mb-4">
                             <a href="javascript:void(0)">
-                                <!-- img -->
+                                 
                                 <div class="img-zoom">
                                     <img src="./../../dist/assets/images/blog/blog-img-4.jpg" alt=""
                                         class="img-fluid rounded w-100" />
@@ -1630,6 +1631,7 @@ $database->closeConnection();
                 </div>
             </div>
         </section>
+        -->
         </div>
     </main>
 

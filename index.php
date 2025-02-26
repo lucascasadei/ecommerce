@@ -7,6 +7,35 @@ if (isset($_SESSION['usuario'])) {
     exit;
 }
 
+
+require_once './backend/database/Database.php';
+
+$database = new Database();
+$pdo = $database->getConnection();
+
+// Obtener los productos con precio mayor a 0 desde la base de datos
+$stmt = $pdo->prepare("SELECT id, codigo_generico, descripcion, ruta_imagen, precio 
+                       FROM articulos 
+                       WHERE precio > 0 
+                       ORDER BY id DESC 
+                       LIMIT 8");
+$stmt->execute();
+$articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Obtener productos en oferta (precio_actual < precio_original y código empieza con "KIT")
+// Obtener productos cuyo codigo_generico empieza con 'KIT' y el precio sea mayor a 0
+$stmt_ofertas = $pdo->prepare("
+    SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 
+    FROM articulos 
+    WHERE codigo_generico LIKE 'KIT%' 
+    AND precio > 0
+");
+$stmt_ofertas->execute();
+$ofertas = $stmt_ofertas->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+$database->closeConnection();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,132 +117,7 @@ if (isset($_SESSION['usuario'])) {
               aria-label="Cerrar"
             ></button>
           </div>
-          <div class="offcanvas-body">
-            <div>
-              <ul class="navbar-nav align-items-center">
-                <!-- Categorías -->
-                <li class="dropdown me-6 d-none d-lg-block">
-                  <a
-                    href="#"
-                    class="text-inherit"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-text-left me-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
-                      ></path>
-                    </svg>
-                    Categorías
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-lg">
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Frutas y Verduras
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Panadería y Lácteos
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Carnes, Pollo y Pescado
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Snacks y Dulces
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Bebidas y Jugos
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="javascript:void(0)"
-                        class="dropdown-item d-flex justify-content-between mb-1 py-1"
-                      >
-                        Productos Congelados
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <!-- Ofertas -->
-                <li class="nav-item">
-                  <a class="nav-link" href="#ofertas">Ofertas</a>
-                </li>
-                <!-- Tiendas -->
-                <li class="nav-item">
-                  <a class="nav-link" href="#tiendas">Nuestras Tiendas</a>
-                </li>
-                <!-- Contacto -->
-                <li class="nav-item">
-                  <a class="nav-link" href="#contacto">Contacto</a>
-                </li>
-                <!-- Mi Cuenta -->
-                <li class="nav-item dropdown">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Mi Cuenta
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" href="#perfil">Perfil</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#pedidos">Mis Pedidos</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#direcciones"
-                        >Direcciones</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#logout">Cerrar Sesión</a>
-                    </li>
-                  </ul>
-                </li>
-                <!-- Carrito -->
-                <li class="nav-item">
-                  <a class="nav-link" href="#carrito">
-                    <i class="bi bi-cart"></i> Carrito
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+        
         </div>
       </div>
     </nav>
@@ -2253,108 +2157,69 @@ if (isset($_SESSION['usuario'])) {
                           
               </div>
 <!-- COMIENZO ARTICULOS -->           
-              <div class="row">
-                <div class="col-12">
-                  <div class="row align-items-center mb-6">
-                    <div class="col-xl-10 col-lg-9 col-8">
-                      <div class="mb-4 mb-lg-0">
-                        <h3 class="mb-1">Nuestros Productos</h3>
-                        <p class="mb-0">New products with updated stocks.</p>
-                      </div>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-4 text-end">
-                      <a href="#" class="btn btn-light">View All</a>
-                    </div>
-                  </div>
-                  <div class="row row-cols-xl-4 row-cols-lg-3 g-4">
-                    <div class="col">
-                      <div class="mb-6">
-                        <div class="card card-product mb-4">
-                          <div class="card-body text-center py-8">
-                            <!-- img -->
-                            <a href="#"
-                              ><img
-                                src="dist/assets/images/category/category-instant-food.jpg"
-                                alt="Grocery Ecommerce Template"
-                                class="mb-3"
-                            /></a>
-                            <!-- text -->
-                          </div>
+<div class="row">
+                        <div class="col-12">
+                            <div class="row align-items-center mb-6">
+                                <div class="col-xl-10 col-lg-9 col-8">
+                                    <div class="mb-4 mb-lg-0">
+                                        <h3 class="mb-1">Nuestros Productos</h3>
+                                        <p class="mb-0">Nuevos productos con stock actualizado.</p>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-lg-3 col-4 text-end">
+                                    <a href="./pages/main/ver_todos_index.php" class="btn btn-light">Ver Todos</a>
+                                </div>
+                            </div>
+
+                            <div class="row row-cols-xl-4 row-cols-lg-3 g-4">
+                                <?php foreach ($articulos as $articulo): ?>
+                                <div class="col">
+                                    <div class="mb-6">
+                                        <!-- Tarjeta del producto -->
+                                        <div class="card card-product mb-4">
+                                            <div class="card-body text-center py-8">
+                                                <!-- Imagen del producto -->
+                                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
+                                                    <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>"
+                                                        alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
+                                                        class="mb-3 img-fluid"
+                                                        style="height: 200px; object-fit: cover;">
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!-- Información del producto -->
+                                        <div>
+                                            <h2 class="mt-3 fs-6">
+                                                <a href="ver_articulo.php?id=<?= $articulo['id']; ?>"
+                                                    class="text-inherit">
+                                                    <?= htmlspecialchars($articulo['descripcion']); ?>
+                                                </a>
+                                            </h2>
+                                            <div>
+                                                <span class="text-dark fs-5 fw-bold">
+                                                    $<?= number_format($articulo['precio'], 2, ',', '.'); ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+
+                                <?php if (empty($articulos)): ?>
+                                <div class="col-12 text-center">
+                                    <p>No hay productos disponibles.</p>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Botón para ver más productos -->
+                            <div class="text-center mt-4">
+                                <a href="ver_todos.php" class="btn btn-primary">Ver Más Productos</a>
+                            </div>
                         </div>
-                        <div>
-                          <span class="badge bg-danger rounded-pill">-45%</span>
-                          <h2 class="mt-3 fs-6">
-                            <a href="#" class="text-inherit">Instant Food</a>
-                          </h2>
-                          <div>
-                            <span class="text-dark fs-5 fw-bold">$18</span>
-                            <span
-                              class="text-decoration-line-through text-muted"
-                              >$24</span
-                            >
-                          </div>
-                          <div class="text-warning">
-                            <!-- rating -->
-                            <small>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-half"></i>
-                            </small>
-                            <span class="text-muted small">4.5</span>
-                          </div>
-                        </div>
-                      </div>
+
                     </div>
-                    <!-- item -->
-                    
-                    <div class="col">
-                      <div class="mb-6">
-                        <!-- card -->
-                        <div class="card card-product mb-4">
-                          <div class="card-body text-center py-8">
-                            <!-- img -->
-                            <a href="#"
-                              ><img
-                                src="dist/assets/images/category/category-chicken-meat-fish.jpg"
-                                alt="Grocery Ecommerce Template"
-                                class="mb-3"
-                            /></a>
-                            <!-- text -->
-                          </div>
-                        </div>
-                        <div>
-                          <span class="badge bg-danger rounded-pill">-45%</span>
-                          <h2 class="mt-3 fs-6">
-                            <a href="#" class="text-inherit"
-                              >Salted Instant Popcorn</a
-                            >
-                          </h2>
-                          <div>
-                            <span class="text-dark fs-5 fw-bold">$18</span>
-                            <span
-                              class="text-decoration-line-through text-muted"
-                              >$24</span
-                            >
-                          </div>
-                          <div class="text-warning">
-                            <!-- rating -->
-                            <small>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-fill"></i>
-                              <i class="bi bi-star-half"></i>
-                            </small>
-                            <span class="text-muted small">4.5</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 <!-- FIN ARTICULOS -->
               
             </div>
