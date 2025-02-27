@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+header('Content-Type: application/json');
+
 require_once __DIR__ . '/../../database/Database.php';
 
 // Verificar si la sesión no ha sido iniciada antes de llamarla
@@ -171,6 +175,37 @@ public function finalizarCompra() {
     }
 }
 
+public function buscarArticulosPorDescripcion($termino) {
+    try {
+        if (empty(trim($termino))) {
+            echo json_encode(["error" => "⚠️ Ingresa un término de búsqueda válido."]);
+            exit;
+        }
+
+        $stmt = $this->pdo->prepare("
+            SELECT id, codigo_generico, descripcion, precio, ruta_imagen 
+            FROM articulos 
+           WHERE descripcion LIKE ? 
+            AND codigo_generico NOT LIKE 'KIT%' 
+            AND codigo_generico NOT LIKE 'KL%'
+
+        ");
+
+        $stmt->execute(['%' . $termino . '%']);
+        $articulosEncontrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$articulosEncontrados) {
+            echo json_encode(["error" => "⚠️ No se encontraron productos."]);
+        } else {
+            echo json_encode($articulosEncontrados);
+        }
+    } catch (Exception $e) {
+        echo json_encode(["error" => "❌ Error en la consulta: " . $e->getMessage()]);
+    }
+    exit;
+}
+
+
     
 }
 
@@ -197,6 +232,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
             break;
         case "finalizarCompra":
             $carrito->finalizarCompra();
+            break;
+        case "buscarArticulo":
+            if (isset($_POST['termino']) && !empty(trim($_POST['termino']))) {
+                $carrito->buscarArticulosPorDescripcion($_POST['termino']);
+            } else {
+                echo json_encode(["error" => "⚠️ Debes ingresar un término de búsqueda válido."]);
+            }
             break;
                 
         

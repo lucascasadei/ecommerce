@@ -61,6 +61,7 @@ $database->closeConnection();
         <!-- navigation -->
         <?php include '../header/header.php'; ?>
         <div class="container">
+
             <div class="row">
                 <!-- Filtros -->
                 <div class="col-lg-3 col-md-4">
@@ -98,6 +99,19 @@ $database->closeConnection();
 
                 <!-- Productos -->
                 <div class="col-lg-9 col-md-8">
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-xxl-12 col-xl-8 col-lg-6 col-md-9">
+                            <form action="#" method="GET">
+                                <div class="input-group">
+                                    <input class="form-control" type="search" placeholder="Buscar productos"
+                                        aria-label="Buscar productos" aria-describedby="button-addon2"
+                                        id="buscarProductos">
+                                    <button class="btn btn-primary" type="button" id="button-addon2">Buscar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <!-- Controles de vista y cantidad -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
@@ -191,23 +205,63 @@ $database->closeConnection();
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const productosLista = document.getElementById("productosLista");
+       ;
         const botonesVista = document.querySelectorAll(".view-toggle");
+        const inputBuscar = document.getElementById("buscarProductos");
+    const productosLista = document.getElementById("productosLista");
+    const productos = document.querySelectorAll(".producto-item"); // Selecciona todos los productos ya cargados
 
+    function buscarProductos() {
+        let terminoBusqueda = inputBuscar.value.trim().toLowerCase();
+
+        // Si el input está vacío, mostrar todos los productos y salir
+        if (terminoBusqueda === "") {
+            productos.forEach(producto => producto.style.display = "block");
+            return;
+        }
+
+        // Filtrar productos según la descripción
+        productos.forEach(producto => {
+            let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
+            if (descripcion.includes(terminoBusqueda)) {
+                producto.style.display = "block"; // Mostrar si coincide
+            } else {
+                producto.style.display = "none"; // Ocultar si no coincide
+            }
+        });
+    }
+
+    // Escuchar evento de entrada en el campo de búsqueda
+    inputBuscar.addEventListener("input", buscarProductos);
+
+        // Evento para búsqueda dinámica
+        inputBuscar.addEventListener("input", buscarProductos);
         // Función para cambiar la vista
         function cambiarVista(vista) {
             // Elimina TODAS las clases de columnas
-            productosLista.classList.remove("row-cols-1", "row-cols-2", "row-cols-3", "row-cols-4",
-                "row-cols-5", "row-cols-md-2", "row-cols-md-3", "row-cols-lg-3", "row-cols-lg-4",
-                "row-cols-xl-5");
+            productosLista.classList.remove(
+                "row-cols-1",
+                "row-cols-2",
+                "row-cols-3",
+                "row-cols-4",
+                "row-cols-5",
+                "row-cols-md-2",
+                "row-cols-md-3",
+                "row-cols-lg-3",
+                "row-cols-lg-4",
+                "row-cols-xl-5",
+                "row-cols-sm-1",
+                "row-cols-sm-2",
+                "row-cols-sm-3",
+            )
 
             // Aplica la vista seleccionada
             if (vista === "list") {
-                productosLista.classList.add("row-cols-1");
+                productosLista.classList.add("row-cols-1")
             } else if (vista === "grid") {
-                productosLista.classList.add("row-cols-2", "row-cols-md-2");
+                productosLista.classList.add("row-cols-1", "row-cols-sm-2", "row-cols-md-2")
             } else if (vista === "grid-3") {
-                productosLista.classList.add("row-cols-3", "row-cols-md-3", "row-cols-lg-3");
+                productosLista.classList.add("row-cols-1", "row-cols-sm-2", "row-cols-md-2", "row-cols-lg-3")
             }
         }
 
