@@ -240,7 +240,7 @@ $database->closeConnection();
         const productosLista = document.getElementById("productosLista");
         // Selecciona todos los productos ya cargados
         const paginacionLista = document.getElementById("paginacion");
-        const productos = Array.from(document.querySelectorAll(".producto-item")); // Convertimos en array
+        let productos = Array.from(document.querySelectorAll(".producto-item")); // Convertimos en array
         const productosPorPagina = 21; // Número de productos por página
         let paginaActual = 1;
 
@@ -325,22 +325,32 @@ $database->closeConnection();
         function buscarProductos() {
             let terminoBusqueda = inputBuscar.value.trim().toLowerCase();
 
-            // Si el input está vacío, mostrar todos los productos y salir
+            // Recuperar todos los productos originales antes de filtrar
+            let todosLosProductos = Array.from(document.querySelectorAll(".producto-item"));
+
             if (terminoBusqueda === "") {
-                productos.forEach(producto => producto.style.display = "block");
-                return;
+                // Si no hay búsqueda, restaurar todos los productos y la paginación normal
+                productos = todosLosProductos;
+            } else {
+                // Filtrar productos que coincidan con la búsqueda
+                productos = todosLosProductos.filter(producto => {
+                    let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
+                    return descripcion.includes(terminoBusqueda);
+                });
             }
 
-            // Filtrar productos según la descripción
-            productos.forEach(producto => {
-                let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
-                if (descripcion.includes(terminoBusqueda)) {
-                    producto.style.display = "block"; // Mostrar si coincide
-                } else {
-                    producto.style.display = "none"; // Ocultar si no coincide
-                }
-            });
+            // Ocultar todos los productos
+            todosLosProductos.forEach(producto => producto.style.display = "none");
+
+            // Mostrar solo los productos filtrados
+            productos.forEach(producto => producto.style.display = "block");
+
+            // Reiniciar la paginación con los productos filtrados
+            paginaActual = 1;
+            mostrarPagina(paginaActual);
         }
+
+
 
         // Escuchar evento de entrada en el campo de búsqueda
         inputBuscar.addEventListener("input", buscarProductos);
