@@ -51,6 +51,31 @@ $database->closeConnection();
         display: flex;
         flex-wrap: wrap;
     }
+
+
+    #paginacion {
+        margin-top: 20px;
+        /* Espacio entre productos y paginación */
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        /* Permite que se ajuste mejor en pantallas pequeñas */
+        justify-content: center;
+        /* Centrar la paginación */
+    }
+
+    .pagination .page-item {
+        margin: 2px;
+        /* Separación entre botones */
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #198754 !important;
+        /* Verde Bootstrap */
+        border-color: #198754 !important;
+        color: white !important;
+    }
     </style>
 </head>
 
@@ -106,7 +131,9 @@ $database->closeConnection();
                                     <input class="form-control" type="search" placeholder="Buscar productos"
                                         aria-label="Buscar productos" aria-describedby="button-addon2"
                                         id="buscarProductos">
-                                    <button class="btn btn-primary" type="button" id="button-addon2">Buscar</button>
+                                    <button class="btn btn-primary" type="button" id="button-addon2">
+                                        <i class="bi bi-search"></i> <!-- Ícono de lupa -->
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -185,10 +212,12 @@ $database->closeConnection();
                         <?php endif; ?>
                     </div>
 
-                    <!-- Paginación -->
+
+                    <!-- Contenedor de paginación -->
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center" id="paginacion"></ul>
                     </nav>
+
                 </div>
             </div>
         </div>
@@ -205,34 +234,116 @@ $database->closeConnection();
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-       ;
+
         const botonesVista = document.querySelectorAll(".view-toggle");
         const inputBuscar = document.getElementById("buscarProductos");
-    const productosLista = document.getElementById("productosLista");
-    const productos = document.querySelectorAll(".producto-item"); // Selecciona todos los productos ya cargados
+        const productosLista = document.getElementById("productosLista");
+        // Selecciona todos los productos ya cargados
+        const paginacionLista = document.getElementById("paginacion");
+        const productos = Array.from(document.querySelectorAll(".producto-item")); // Convertimos en array
+        const productosPorPagina = 21; // Número de productos por página
+        let paginaActual = 1;
 
-    function buscarProductos() {
-        let terminoBusqueda = inputBuscar.value.trim().toLowerCase();
+        function mostrarPagina(pagina) {
+            // Ocultar todos los productos
+            productos.forEach(producto => producto.style.display = "none");
 
-        // Si el input está vacío, mostrar todos los productos y salir
-        if (terminoBusqueda === "") {
-            productos.forEach(producto => producto.style.display = "block");
-            return;
+            // Calcula qué productos mostrar en la página actual
+            const inicio = (pagina - 1) * productosPorPagina;
+            const fin = inicio + productosPorPagina;
+
+            // Muestra los productos de la página actual
+            productos.slice(inicio, fin).forEach(producto => producto.style.display = "block");
+
+            // Actualizar la paginación
+            actualizarPaginacion();
         }
 
-        // Filtrar productos según la descripción
-        productos.forEach(producto => {
-            let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
-            if (descripcion.includes(terminoBusqueda)) {
-                producto.style.display = "block"; // Mostrar si coincide
-            } else {
-                producto.style.display = "none"; // Ocultar si no coincide
-            }
-        });
-    }
+        function actualizarPaginacion() {
+            const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+            paginacionLista.innerHTML = "";
+            let maxBotones = 5; // Cantidad de páginas visibles antes de mostrar "..."
 
-    // Escuchar evento de entrada en el campo de búsqueda
-    inputBuscar.addEventListener("input", buscarProductos);
+            // Botón "Anterior"
+            if (paginaActual > 1) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual - 1}">&laquo; Anterior</a></li>`;
+            }
+
+            // Agregar primeros números siempre visibles
+            if (paginaActual > 2) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="1">1</a></li>`;
+                if (paginaActual > 3) {
+                    paginacionLista.innerHTML +=
+                        `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Mostrar rango de páginas cercano a la actual
+            let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+            let fin = Math.min(totalPaginas, inicio + maxBotones - 1);
+
+            for (let i = inicio; i <= fin; i++) {
+                paginacionLista.innerHTML += `<li class="page-item ${i === paginaActual ? 'active' : ''}">
+            <a class="page-link" href="#" data-pagina="${i}">${i}</a>
+        </li>`;
+            }
+
+            // Agregar últimos números siempre visibles
+            if (paginaActual < totalPaginas - 1) {
+                if (paginaActual < totalPaginas - 2) {
+                    paginacionLista.innerHTML +=
+                        `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${totalPaginas}">${totalPaginas}</a></li>`;
+            }
+
+            // Botón "Siguiente"
+            if (paginaActual < totalPaginas) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual + 1}">Siguiente &raquo;</a></li>`;
+            }
+
+            // Agregar eventos de clic
+            document.querySelectorAll("#paginacion .page-link").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    paginaActual = parseInt(this.getAttribute("data-pagina"));
+                    mostrarPagina(paginaActual);
+                });
+            });
+        }
+
+
+        // Mostrar la primera página al cargar
+        if (productos.length > 0) {
+            mostrarPagina(1);
+        }
+
+        function buscarProductos() {
+            let terminoBusqueda = inputBuscar.value.trim().toLowerCase();
+
+            // Si el input está vacío, mostrar todos los productos y salir
+            if (terminoBusqueda === "") {
+                productos.forEach(producto => producto.style.display = "block");
+                return;
+            }
+
+            // Filtrar productos según la descripción
+            productos.forEach(producto => {
+                let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
+                if (descripcion.includes(terminoBusqueda)) {
+                    producto.style.display = "block"; // Mostrar si coincide
+                } else {
+                    producto.style.display = "none"; // Ocultar si no coincide
+                }
+            });
+        }
+
+        // Escuchar evento de entrada en el campo de búsqueda
+        inputBuscar.addEventListener("input", buscarProductos);
 
         // Evento para búsqueda dinámica
         inputBuscar.addEventListener("input", buscarProductos);
