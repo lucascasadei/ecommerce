@@ -4,35 +4,44 @@ require_once '../../backend/database/Database.php';
 $database = new Database();
 $pdo = $database->getConnection();
 
-// Obtener grupos (ordenamiento1) únicos solo para productos con 'KIT' en codigo_generico
+// Obtener grupos (ordenamiento1) únicos de productos con precio válido y código_generico que comience con 'KIT'
 $stmt_grupos = $pdo->prepare("
     SELECT DISTINCT ordenamiento1 
     FROM articulos 
     WHERE ordenamiento1 IS NOT NULL 
+    AND precio IS NOT NULL 
+    AND precio > 0 
     AND codigo_generico LIKE 'KIT%' 
     ORDER BY ordenamiento1
 ");
 $stmt_grupos->execute();
 $grupos = $stmt_grupos->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener subgrupos (ordenamiento2) únicos solo para productos con 'KIT' en codigo_generico
+// Obtener subgrupos (ordenamiento2) únicos de productos con precio válido y código_generico que comience con 'KIT'
 $stmt_subgrupos = $pdo->prepare("
     SELECT DISTINCT ordenamiento2 
     FROM articulos 
     WHERE ordenamiento2 IS NOT NULL 
+    AND precio IS NOT NULL 
+    AND precio > 0 
     AND codigo_generico LIKE 'KIT%' 
     ORDER BY ordenamiento2
 ");
 $stmt_subgrupos->execute();
 $subgrupos = $stmt_subgrupos->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener productos con precio mayor a 0 y cuyo codigo_generico empieza con 'KIT'
+// Obtener productos con precio válido y código_generico que comience con 'KIT'
 $stmt_productos = $pdo->prepare("
-    SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 
-    FROM articulos 
-    WHERE precio > 0 
-    AND codigo_generico LIKE 'KIT%' 
-    ORDER BY id DESC
+    SELECT a.id, a.codigo_generico, a.descripcion, 
+           CAST(a.precio AS DECIMAL(10,2)) AS precio, 
+           a.ordenamiento1, a.ordenamiento2,
+           COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
+    FROM articulos a
+    LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
+    WHERE a.codigo_generico LIKE 'KIT%'
+    AND a.precio IS NOT NULL
+    HAVING precio > 0
+    ORDER BY a.id DESC
 ");
 $stmt_productos->execute();
 $articulos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
@@ -54,148 +63,169 @@ $database->closeConnection();
     <link href="./../../dist/assets/libs/feather-webfont/dist/feather-icons.css" rel="stylesheet" />
     <link href="./../../dist/assets/libs/simplebar/dist/simplebar.min.css" rel="stylesheet" />
     <style>
-        /* Asegurar que los filtros no afecten el ancho de la cuadrícula */
-@media (min-width: 992px) {
-    .col-lg-3 {
-        max-width: 25%;
-    }
-    .col-lg-9 {
-        max-width: 75%;
-    }
-}
+    /* Asegurar que los filtros no afecten el ancho de la cuadrícula */
+    @media (min-width: 992px) {
+        .col-lg-3 {
+            max-width: 25%;
+        }
 
-/* Asegurar que los productos se ajusten correctamente */
-#productosLista {
-    display: flex;
-    flex-wrap: wrap;
-}
+        .col-lg-9 {
+            max-width: 75%;
+        }
+    }
 
+    /* Asegurar que los productos se ajusten correctamente */
+    #productosLista {
+        display: flex;
+        flex-wrap: wrap;
+    }
     </style>
 </head>
-
 <body>
 
 
-<main>
+    <main>
         <!-- navigation -->
         <?php include '../header/header.php'; ?>
-<div class="container">
-    <div class="row">
-        <!-- Filtros -->
-        <div class="col-lg-3 col-md-4">
-            <div class="card p-3">
-                <h5 class="mb-3">Filtrar por Grupo</h5>
-                <select id="filtroGrupo" class="form-control">
-                    <option value="">Todos</option>
-                    <?php foreach ($grupos as $grupo): ?>
-                        <option value="<?= htmlspecialchars($grupo['ordenamiento1']); ?>">
-                            <?= htmlspecialchars($grupo['ordenamiento1']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+        <div class="container">
 
-                <h5 class="mt-4 mb-3">Filtrar por Subgrupo</h5>
-                <select id="filtroSubgrupo" class="form-control">
-                    <option value="">Todos</option>
-                    <?php foreach ($subgrupos as $subgrupo): ?>
-                        <option value="<?= htmlspecialchars($subgrupo['ordenamiento2']); ?>">
-                            <?= htmlspecialchars($subgrupo['ordenamiento2']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="row">
+                <!-- Filtros -->
+                <div class="col-lg-3 col-md-4">
+                    <div class="card p-3">
+                        <h5 class="mb-3">Filtrar por Grupo</h5>
+                        <select id="filtroGrupo" class="form-control">
+                            <option value="">Todos</option>
+                            <?php foreach ($grupos as $grupo): ?>
+                            <option value="<?= htmlspecialchars($grupo['ordenamiento1']); ?>">
+                                <?= htmlspecialchars($grupo['ordenamiento1']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
 
-                <h5 class="mt-4 mb-3">Filtrar por Precio</h5>
-                <input type="range" id="filtroPrecio" class="form-range" min="0" max="100000" step="500" value="100000">
-                <p>Hasta: <span id="precioSeleccionado">100000</span></p>
+                        <h5 class="mt-4 mb-3">Filtrar por Subgrupo</h5>
+                        <select id="filtroSubgrupo" class="form-control">
+                            <option value="">Todos</option>
+                            <?php foreach ($subgrupos as $subgrupo): ?>
+                            <option value="<?= htmlspecialchars($subgrupo['ordenamiento2']); ?>">
+                                <?= htmlspecialchars($subgrupo['ordenamiento2']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
 
-                <div class="d-flex justify-content-center mt-3">
-                    <a href="../carrito/carrito.php" class="btn btn-primary">🛒 Ver Carrito</a>
+                        <h5 class="mt-4 mb-3">Filtrar por Precio</h5>
+                        <input type="range" id="filtroPrecio" class="form-range" min="0" max="100000" step="500"
+                            value="100000">
+                        <p>Hasta: <span id="precioSeleccionado">100000</span></p>
+
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="../carrito/carrito.php" class="btn btn-primary">🛒 Ver Carrito</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Productos -->
-        <div class="col-lg-9 col-md-8">
-            <!-- Controles de vista y cantidad -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <button class="btn btn-outline-secondary me-2 view-toggle" data-view="list">
-                        <i class="bi bi-list-ul"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary me-2 view-toggle active" data-view="grid">
-                        <i class="bi bi-grid"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary view-toggle" data-view="grid-3">
-                        <i class="bi bi-grid-3x3-gap"></i>
-                    </button>
-                </div>
-                <div class="d-flex">
-                    <select id="cantidadProductos" class="form-select me-2">
-                        <option value="10">Mostrar: 10</option>
-                        <option value="20">Mostrar: 20</option>
-                        <option value="30">Mostrar: 30</option>
-                        <option value="50">Mostrar: 50</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3"  id="productosLista">
-                <?php foreach ($articulos as $articulo): ?>
-                    <div class="col producto-item"
-                        data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
-                        data-subgrupo="<?= htmlspecialchars($articulo['ordenamiento2']); ?>"
-                        data-precio="<?= $articulo['precio']; ?>">
-
-                        <div class="card card-product h-100">
-                            <div class="card-body">
-                                <div class="text-center position-relative">
-                                    <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
-                                        <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>"
-                                            alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
-                                            class="mb-3 img-fluid" style="height: 200px; object-fit: cover;">
-                                    </a>
+                <!-- Productos -->
+                <div class="col-lg-9 col-md-8">
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-xxl-12 col-xl-8 col-lg-6 col-md-9">
+                            <form action="#" method="GET">
+                                <div class="input-group">
+                                    <input class="form-control" type="search" placeholder="Buscar productos"
+                                        aria-label="Buscar productos" aria-describedby="button-addon2"
+                                        id="buscarProductos">
+                                    <button class="btn btn-primary" type="button" id="button-addon2">
+                                        <i class="bi bi-search"></i> <!-- Ícono de lupa -->
+                                    </button>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
 
-                                <h2 class="fs-6">
-                                    <a href="ver_articulo.php?id=<?= $articulo['id']; ?>" class="text-inherit text-decoration-none">
-                                        <?= htmlspecialchars($articulo['descripcion']); ?>
-                                    </a>
-                                </h2>
+                    <!-- Controles de vista y cantidad -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <button class="btn btn-outline-secondary me-2 view-toggle" data-view="list">
+                                <i class="bi bi-list-ul"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary me-2 view-toggle " data-view="grid">
+                                <i class="bi bi-grid"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary view-toggle active" data-view="grid-3">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex">
+                            <select id="cantidadProductos" class="form-select me-2">
+                                <option value="10">Mostrar: 10</option>
+                                <option value="20">Mostrar: 20</option>
+                                <option value="30">Mostrar: 30</option>
+                                <option value="50">Mostrar: 50</option>
+                            </select>
+                        </div>
+                    </div>
 
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div>
-                                        <span class="text-dark fs-5 fw-bold">$<?= number_format($articulo['precio'], 2, ',', '.'); ?></span>
+                    <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-3" id="productosLista">
+                        <?php foreach ($articulos as $articulo): ?>
+                        <div class="col producto-item" data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
+                            data-subgrupo="<?= htmlspecialchars($articulo['ordenamiento2']); ?>"
+                            data-precio="<?= $articulo['precio']; ?>">
+
+                            <div class="card card-product h-100">
+                                <div class="card-body">
+                                    <div class="text-center position-relative">
+                                        <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
+                                            <img src="../../<?= $articulo['ruta_imagen']; ?>"
+                                                alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
+                                                class="mb-3 img-fluid" style="height: 200px; object-fit: cover;">
+                                        </a>
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-outline-primary btn-sm btn-disminuir"
-                                            data-id="<?= $articulo['id']; ?>">-</button>
-                                        <span class="mx-2 cantidad-producto"
-                                            data-id="<?= $articulo['id']; ?>">0</span>
-                                        <button class="btn btn-outline-primary btn-sm btn-aumentar"
-                                            data-id="<?= $articulo['id']; ?>">+</button>
+
+                                    <h2 class="fs-6">
+                                        <a href="ver_articulo.php?id=<?= $articulo['id']; ?>"
+                                            class="text-inherit text-decoration-none">
+                                            <?= htmlspecialchars($articulo['descripcion']); ?>
+                                        </a>
+                                    </h2>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            <span class="text-dark fs-5 fw-bold">
+                                                $<?= number_format($articulo['precio'], 2, ',', '.'); ?>
+                                            </span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-outline-primary btn-sm btn-disminuir"
+                                                data-id="<?= $articulo['id']; ?>">-</button>
+                                            <span class="mx-2 cantidad-producto"
+                                                data-id="<?= $articulo['id']; ?>">0</span>
+                                            <button class="btn btn-outline-primary btn-sm btn-aumentar"
+                                                data-id="<?= $articulo['id']; ?>">+</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                        <?php endforeach; ?>
 
-                <?php if (empty($articulos)): ?>
-                    <div class="col-12 text-center">
-                        <p>No hay productos disponibles.</p>
+                        <?php if (empty($articulos)): ?>
+                        <div class="col-12 text-center">
+                            <p>No hay productos disponibles.</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+
+
+
+                    <!-- Contenedor de paginación -->
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center" id="paginacion"></ul>
+                    </nav>
+
+                </div>
             </div>
-
-            <!-- Paginación -->
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center" id="paginacion"></ul>
-            </nav>
         </div>
-    </div>
-</div>
 
-</main>
+    </main>
 
 
 
@@ -207,60 +237,207 @@ $database->closeConnection();
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Elementos de filtro
-        const filtroGrupo = document.getElementById("filtroGrupo");
-        const filtroSubgrupo = document.getElementById("filtroSubgrupo");
-        const filtroPrecio = document.getElementById("filtroPrecio");
-        const precioSeleccionado = document.getElementById("precioSeleccionado");
+
+        const botonesVista = document.querySelectorAll(".view-toggle");
+        const inputBuscar = document.getElementById("buscarProductos");
         const productosLista = document.getElementById("productosLista");
-    const botonesVista = document.querySelectorAll(".view-toggle");
+        // Selecciona todos los productos ya cargados
+        const paginacionLista = document.getElementById("paginacion");
+        let productos = Array.from(document.querySelectorAll(".producto-item")); // Convertimos en array
+        const productosPorPagina = 21; // Número de productos por página
+        let paginaActual = 1;
 
-    // Configurar la vista inicial (5 columnas en pantallas grandes)
-    productosLista.classList.add("row-cols-1", "row-cols-md-2", "row-cols-xl-3");
+        function mostrarPagina(pagina) {
+            // Ocultar todos los productos
+            productos.forEach(producto => producto.style.display = "none");
 
-    botonesVista.forEach(boton => {
-        boton.addEventListener("click", function() {
-            // Remover la clase 'active' de todos los botones y asignarla al botón seleccionado
-            botonesVista.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
+            // Calcula qué productos mostrar en la página actual
+            const inicio = (pagina - 1) * productosPorPagina;
+            const fin = inicio + productosPorPagina;
 
-            // Obtener la vista seleccionada
-            const vistaSeleccionada = this.dataset.view;
+            // Muestra los productos de la página actual
+            productos.slice(inicio, fin).forEach(producto => producto.style.display = "block");
 
-            // Resetear clases de columnas
-            productosLista.classList.remove("row-cols-1", "row-cols-2", "row-cols-md-3", "row-cols-lg-4", "row-cols-xl-5");
+            // Actualizar la paginación
+            actualizarPaginacion();
+        }
 
-            // Aplicar las clases de Bootstrap correspondientes a la vista
-            if (vistaSeleccionada === "list") {
-                productosLista.classList.add("row-cols-1");
-            } else if (vistaSeleccionada === "grid") {
-                productosLista.classList.add("row-cols-2", "row-cols-md-2");
-            } else if (vistaSeleccionada === "grid-3") {
-               productosLista.classList.add("row-cols-3", "row-cols-md-3", "row-cols-lg-3", "row-cols-xl-3");
+        function actualizarPaginacion() {
+            const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+            paginacionLista.innerHTML = "";
+            let maxBotones = 5; // Cantidad de páginas visibles antes de mostrar "..."
+
+            // Botón "Anterior"
+            if (paginaActual > 1) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual - 1}">&laquo; Anterior</a></li>`;
             }
+
+            // Agregar primeros números siempre visibles
+            if (paginaActual > 2) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="1">1</a></li>`;
+                if (paginaActual > 3) {
+                    paginacionLista.innerHTML +=
+                        `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Mostrar rango de páginas cercano a la actual
+            let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+            let fin = Math.min(totalPaginas, inicio + maxBotones - 1);
+
+            for (let i = inicio; i <= fin; i++) {
+                paginacionLista.innerHTML += `<li class="page-item ${i === paginaActual ? 'active' : ''}">
+            <a class="page-link" href="#" data-pagina="${i}">${i}</a>
+         </li>`;
+            }
+
+            // Agregar últimos números siempre visibles
+            if (paginaActual < totalPaginas - 1) {
+                if (paginaActual < totalPaginas - 2) {
+                    paginacionLista.innerHTML +=
+                        `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${totalPaginas}">${totalPaginas}</a></li>`;
+            }
+
+            // Botón "Siguiente"
+            if (paginaActual < totalPaginas) {
+                paginacionLista.innerHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual + 1}">Siguiente &raquo;</a></li>`;
+            }
+
+            // Agregar eventos de clic
+            document.querySelectorAll("#paginacion .page-link").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    paginaActual = parseInt(this.getAttribute("data-pagina"));
+                    mostrarPagina(paginaActual);
+                });
+            });
+        }
+
+
+        // Mostrar la primera página al cargar
+        if (productos.length > 0) {
+            mostrarPagina(1);
+        }
+
+        function buscarProductos() {
+            let terminoBusqueda = inputBuscar.value.trim().toLowerCase();
+
+            // Recuperar todos los productos originales antes de filtrar
+            let todosLosProductos = Array.from(document.querySelectorAll(".producto-item"));
+
+            if (terminoBusqueda === "") {
+                // Si no hay búsqueda, restaurar todos los productos y la paginación normal
+                productos = todosLosProductos;
+            } else {
+                // Filtrar productos que coincidan con la búsqueda
+                productos = todosLosProductos.filter(producto => {
+                    let descripcion = producto.querySelector("h2 a").innerText.toLowerCase();
+                    return descripcion.includes(terminoBusqueda);
+                });
+            }
+
+            // Ocultar todos los productos
+            todosLosProductos.forEach(producto => producto.style.display = "none");
+
+            // Mostrar solo los productos filtrados
+            productos.forEach(producto => producto.style.display = "block");
+
+            // Reiniciar la paginación con los productos filtrados
+            paginaActual = 1;
+            mostrarPagina(paginaActual);
+        }
+
+
+
+        // Escuchar evento de entrada en el campo de búsqueda
+        inputBuscar.addEventListener("input", buscarProductos);
+
+        // Evento para búsqueda dinámica
+        inputBuscar.addEventListener("input", buscarProductos);
+        // Función para cambiar la vista
+        function cambiarVista(vista) {
+            // Elimina TODAS las clases de columnas
+            productosLista.classList.remove(
+                "row-cols-1",
+                "row-cols-2",
+                "row-cols-3",
+                "row-cols-4",
+                "row-cols-5",
+                "row-cols-md-2",
+                "row-cols-md-3",
+                "row-cols-lg-3",
+                "row-cols-lg-4",
+                "row-cols-xl-5",
+                "row-cols-sm-1",
+                "row-cols-sm-2",
+                "row-cols-sm-3",
+            )
+
+            // Aplica la vista seleccionada
+            if (vista === "list") {
+                productosLista.classList.add("row-cols-1")
+            } else if (vista === "grid") {
+                productosLista.classList.add("row-cols-1", "row-cols-sm-2", "row-cols-md-2")
+            } else if (vista === "grid-3") {
+                productosLista.classList.add("row-cols-1", "row-cols-sm-2", "row-cols-md-2", "row-cols-lg-3")
+            }
+        }
+
+        // Aplicar vista predeterminada (3 columnas)
+        cambiarVista("grid-3");
+
+        // Evento para los botones de vista
+        botonesVista.forEach(boton => {
+            boton.addEventListener("click", function() {
+                // Remover la clase 'active' de todos los botones y asignarla al botón seleccionado
+                botonesVista.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+
+                // Obtener la vista seleccionada y aplicarla
+                const vistaSeleccionada = this.dataset.view;
+                cambiarVista(vistaSeleccionada);
+            });
         });
-    });
+
+
         // Función para filtrar productos dinámicamente
+        // Función para filtrar productos dinámicamente con paginación
         function filtrarProductos() {
             const grupoSeleccionado = filtroGrupo.value.toLowerCase();
             const subgrupoSeleccionado = filtroSubgrupo.value.toLowerCase();
             const precioMaximo = parseFloat(filtroPrecio.value);
 
-            document.querySelectorAll(".producto-item").forEach(producto => {
+            // Recuperar todos los productos originales antes de filtrar
+            let todosLosProductos = Array.from(document.querySelectorAll(".producto-item"));
+
+            // Filtrar productos según los criterios seleccionados
+            productos = todosLosProductos.filter(producto => {
                 const grupoProducto = producto.getAttribute("data-grupo") ? producto.getAttribute(
                     "data-grupo").toLowerCase() : "";
                 const subgrupoProducto = producto.getAttribute("data-subgrupo") ? producto.getAttribute(
                     "data-subgrupo").toLowerCase() : "";
                 const precioProducto = parseFloat(producto.getAttribute("data-precio"));
 
-                if ((grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
-                    (subgrupoSeleccionado === "" || subgrupoProducto.includes(subgrupoSeleccionado)) &&
-                    (precioProducto <= precioMaximo)) {
-                    producto.style.display = "block";
-                } else {
-                    producto.style.display = "none";
-                }
+                return (
+                    (grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
+                    (subgrupoSeleccionado === "" || subgrupoProducto.includes(
+                        subgrupoSeleccionado)) &&
+                    (precioProducto <= precioMaximo)
+                );
             });
+
+            // Ocultar todos los productos
+            todosLosProductos.forEach(producto => producto.style.display = "none");
+
+            // Reiniciar la paginación con los productos filtrados
+            paginaActual = 1;
+            mostrarPagina(paginaActual);
         }
 
         // Eventos para los filtros
@@ -271,6 +448,7 @@ $database->closeConnection();
 
         filtroGrupo.addEventListener("change", filtrarProductos);
         filtroSubgrupo.addEventListener("change", filtrarProductos);
+
 
         // 🛒 Funcionalidad del carrito
         function inicializarCarrito() {
@@ -378,7 +556,6 @@ $database->closeConnection();
                         });
                 });
             });
-
             document.querySelectorAll(".btn-disminuir").forEach(boton => {
                 boton.addEventListener("click", function() {
                     const idArticulo = this.getAttribute("data-id");
@@ -406,6 +583,7 @@ $database->closeConnection();
                             })
                             .catch(error => console.error("Error:", error));
                     } else {
+                        // Cuando la cantidad llega a 0, eliminar el producto del carrito
                         fetch("../../backend/controllers/carrito/carrito_controller.php", {
                                 method: "POST",
                                 headers: {
@@ -416,9 +594,17 @@ $database->closeConnection();
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    cantidadElemento.parentElement.innerHTML =
+                                    // Reemplazar los controles con el botón "+"
+                                    const parentDiv = cantidadElemento.parentElement;
+                                    parentDiv.innerHTML =
                                         `<button class="btn btn-primary btn-sm btn-agregar" data-id="${idArticulo}">+</button>`;
-                                    agregarEventosCantidad();
+
+                                    // Volver a asignar eventos al nuevo botón
+                                    document.querySelector(
+                                            `.btn-agregar[data-id="${idArticulo}"]`)
+                                        .addEventListener("click", function() {
+                                            agregarProductoAlCarrito(idArticulo);
+                                        });
                                 } else {
                                     alert("⚠️ Error: " + data.error);
                                 }
@@ -427,6 +613,27 @@ $database->closeConnection();
                     }
                 });
             });
+
+            // Nueva función para agregar un producto al carrito
+            function agregarProductoAlCarrito(idArticulo) {
+                fetch("../../backend/controllers/carrito/carrito_controller.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: `accion=agregar&idArticulo=${idArticulo}&cantidad=1`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            mostrarControles(idArticulo, 1);
+                        } else {
+                            alert("⚠️ Error: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+
         }
 
         inicializarCarrito();

@@ -4,17 +4,40 @@ require_once '../../backend/database/Database.php';
 $database = new Database();
 $pdo = $database->getConnection();
 
-// Obtener grupos (ordenamiento1) y subgrupos (ordenamiento2) únicos
-$stmt_grupos = $pdo->prepare("SELECT DISTINCT ordenamiento1 FROM articulos WHERE ordenamiento1 IS NOT NULL ORDER BY ordenamiento1");
+// Obtener grupos (ordenamiento1) únicos de productos con precio válido
+$stmt_grupos = $pdo->prepare("
+    SELECT DISTINCT ordenamiento1 
+    FROM articulos 
+    WHERE ordenamiento1 IS NOT NULL 
+    AND precio IS NOT NULL 
+    AND precio > 0 
+    ORDER BY ordenamiento1
+");
 $stmt_grupos->execute();
 $grupos = $stmt_grupos->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt_subgrupos = $pdo->prepare("SELECT DISTINCT ordenamiento2 FROM articulos WHERE ordenamiento2 IS NOT NULL ORDER BY ordenamiento2");
+// Obtener subgrupos (ordenamiento2) únicos de productos con precio válido
+$stmt_subgrupos = $pdo->prepare("
+    SELECT DISTINCT ordenamiento2 
+    FROM articulos 
+    WHERE ordenamiento2 IS NOT NULL 
+    AND precio IS NOT NULL 
+    AND precio > 0 
+    ORDER BY ordenamiento2
+");
 $stmt_subgrupos->execute();
 $subgrupos = $stmt_subgrupos->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener productos con precio mayor a 0
-$stmt_productos = $pdo->prepare("SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 FROM articulos WHERE precio > 0 ORDER BY id DESC");
+// Obtener productos con precio válido
+$stmt_productos = $pdo->prepare("
+    SELECT a.id, a.codigo_generico, a.descripcion, a.precio, a.ordenamiento1, a.ordenamiento2,
+           COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
+    FROM articulos a
+    LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
+    WHERE a.precio IS NOT NULL 
+    AND a.precio > 0 
+    ORDER BY a.id DESC
+");
 $stmt_productos->execute();
 $articulos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
 
@@ -163,7 +186,6 @@ $database->closeConnection();
                     </div>
 
                     <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-3" id="productosLista">
-
                         <?php foreach ($articulos as $articulo): ?>
                         <div class="col producto-item" data-grupo="<?= htmlspecialchars($articulo['ordenamiento1']); ?>"
                             data-subgrupo="<?= htmlspecialchars($articulo['ordenamiento2']); ?>"
@@ -173,7 +195,7 @@ $database->closeConnection();
                                 <div class="card-body">
                                     <div class="text-center position-relative">
                                         <a href="ver_articulo.php?id=<?= $articulo['id']; ?>">
-                                            <img src="../../<?= !empty($articulo['ruta_imagen']) ? $articulo['ruta_imagen'] : 'assets/imagenes/articulos/default.png'; ?>"
+                                            <img src="../../<?= $articulo['ruta_imagen']; ?>"
                                                 alt="<?= htmlspecialchars($articulo['descripcion']); ?>"
                                                 class="mb-3 img-fluid" style="height: 200px; object-fit: cover;">
                                         </a>
@@ -188,8 +210,9 @@ $database->closeConnection();
 
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <div>
-                                            <span
-                                                class="text-dark fs-5 fw-bold">$<?= number_format($articulo['precio'], 2, ',', '.'); ?></span>
+                                            <span class="text-dark fs-5 fw-bold">
+                                                $<?= number_format($articulo['precio'], 2, ',', '.'); ?>
+                                            </span>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <button class="btn btn-outline-primary btn-sm btn-disminuir"
@@ -211,6 +234,7 @@ $database->closeConnection();
                         </div>
                         <?php endif; ?>
                     </div>
+
 
 
                     <!-- Contenedor de paginación -->
@@ -287,7 +311,7 @@ $database->closeConnection();
             for (let i = inicio; i <= fin; i++) {
                 paginacionLista.innerHTML += `<li class="page-item ${i === paginaActual ? 'active' : ''}">
             <a class="page-link" href="#" data-pagina="${i}">${i}</a>
-        </li>`;
+         </li>`;
             }
 
             // Agregar últimos números siempre visibles
@@ -404,26 +428,37 @@ $database->closeConnection();
 
 
         // Función para filtrar productos dinámicamente
+        // Función para filtrar productos dinámicamente con paginación
         function filtrarProductos() {
             const grupoSeleccionado = filtroGrupo.value.toLowerCase();
             const subgrupoSeleccionado = filtroSubgrupo.value.toLowerCase();
             const precioMaximo = parseFloat(filtroPrecio.value);
 
-            document.querySelectorAll(".producto-item").forEach(producto => {
+            // Recuperar todos los productos originales antes de filtrar
+            let todosLosProductos = Array.from(document.querySelectorAll(".producto-item"));
+
+            // Filtrar productos según los criterios seleccionados
+            productos = todosLosProductos.filter(producto => {
                 const grupoProducto = producto.getAttribute("data-grupo") ? producto.getAttribute(
                     "data-grupo").toLowerCase() : "";
                 const subgrupoProducto = producto.getAttribute("data-subgrupo") ? producto.getAttribute(
                     "data-subgrupo").toLowerCase() : "";
                 const precioProducto = parseFloat(producto.getAttribute("data-precio"));
 
-                if ((grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
-                    (subgrupoSeleccionado === "" || subgrupoProducto.includes(subgrupoSeleccionado)) &&
-                    (precioProducto <= precioMaximo)) {
-                    producto.style.display = "block";
-                } else {
-                    producto.style.display = "none";
-                }
+                return (
+                    (grupoSeleccionado === "" || grupoProducto.includes(grupoSeleccionado)) &&
+                    (subgrupoSeleccionado === "" || subgrupoProducto.includes(
+                        subgrupoSeleccionado)) &&
+                    (precioProducto <= precioMaximo)
+                );
             });
+
+            // Ocultar todos los productos
+            todosLosProductos.forEach(producto => producto.style.display = "none");
+
+            // Reiniciar la paginación con los productos filtrados
+            paginaActual = 1;
+            mostrarPagina(paginaActual);
         }
 
         // Eventos para los filtros
@@ -434,6 +469,7 @@ $database->closeConnection();
 
         filtroGrupo.addEventListener("change", filtrarProductos);
         filtroSubgrupo.addEventListener("change", filtrarProductos);
+
 
         // 🛒 Funcionalidad del carrito
         function inicializarCarrito() {

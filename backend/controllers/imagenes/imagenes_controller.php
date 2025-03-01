@@ -1,25 +1,14 @@
 <?php
 require_once '../../database/Database.php';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['imagen']) && isset($_POST['id_articulo'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['imagen']) && isset($_POST['codigo_generico'])) {
     $database = new Database();
     $pdo = $database->getConnection();
 
-    $idArticulo = $_POST['id_articulo'];
+    $codigoGenerico = $_POST['codigo_generico'];
 
-    // Obtener el código del artículo desde la BD
-    $stmt = $pdo->prepare("SELECT codigo_generico FROM articulos WHERE id = :id");
-    $stmt->bindParam(":id", $idArticulo, PDO::PARAM_INT);
-    $stmt->execute();
-    $articulo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$articulo) {
-        die("❌ Error: El artículo no existe.");
-    }
-
-    // Normalizar el código del artículo
-    $codigoArticulo = preg_replace('/[^a-zA-Z0-9]/', '_', $articulo['codigo_generico']); // Reemplazar caracteres no válidos
-    $codigoArticulo = strtolower($codigoArticulo); // Convertir a minúsculas
+    // Normalizar el código del artículo para el nombre del archivo
+    $codigoArticulo = preg_replace('/[^a-zA-Z0-9]/', '_', $codigoGenerico);
+    $codigoArticulo = strtolower($codigoArticulo);
 
     // Definir el directorio donde se guardará la imagen
     $directorio = __DIR__ . "/../../../assets/imagenes/articulos/";
@@ -31,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['imagen']) && isset($_
     $extension = strtolower(pathinfo($_FILES["imagen"]["name"], PATHINFO_EXTENSION));
     $nombreArchivo = "articulo_" . $codigoArticulo . "." . $extension;
     $rutaCompleta = $directorio . $nombreArchivo;
-    $rutaBD = "assets/imagenes/articulos/" . $nombreArchivo; // Para guardar en BD
+    $rutaBD = "assets/imagenes/articulos/" . $nombreArchivo;
 
     // Verificar que el formato de la imagen es válido
     $permitidos = ['jpg', 'jpeg', 'png', 'gif'];
@@ -39,17 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['imagen']) && isset($_
         die("❌ Error: Formato de imagen no permitido.");
     }
 
-    // Subir la imagen y actualizar la base de datos
+    // Subir la imagen y guardar en BD
     if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaCompleta)) {
-        $stmt = $pdo->prepare("UPDATE articulos SET ruta_imagen = :ruta WHERE id = :id");
-        $stmt->bindParam(":ruta", $rutaBD);
-        $stmt->bindParam(":id", $idArticulo, PDO::PARAM_INT);
+        // Insertar la imagen en la tabla `imagenes_articulos`
+        $stmt = $pdo->prepare("
+            INSERT INTO imagenes_articulos (codigo_generico, ruta_imagen) 
+            VALUES (:codigo_generico, :ruta_imagen)
+            ON DUPLICATE KEY UPDATE ruta_imagen = VALUES(ruta_imagen)
+        ");
+        $stmt->execute([
+            ':codigo_generico' => $codigoGenerico,
+            ':ruta_imagen' => $rutaBD
+        ]);
 
-        if ($stmt->execute()) {
-            echo "✅ Imagen subida y guardada correctamente.";
-        } else {
-            echo "❌ Error al guardar la imagen en la base de datos.";
-        }
+        echo "✅ Imagen subida y guardada correctamente.";
     } else {
         echo "❌ Error al subir la imagen.";
     }

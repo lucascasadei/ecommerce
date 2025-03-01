@@ -4,22 +4,30 @@ require_once '../../backend/database/Database.php';
 $database = new Database();
 $pdo = $database->getConnection();
 
-// Obtener los productos con precio mayor a 0 desde la base de datos
-$stmt = $pdo->prepare("SELECT id, codigo_generico, descripcion, ruta_imagen, precio 
-                       FROM articulos 
-                       WHERE precio > 0 
-                       ORDER BY id DESC 
-                       LIMIT 8");
+// Obtener los productos con precio mayor a 0 desde la base de datos con su imagen
+$stmt = $pdo->prepare("
+    SELECT a.id, a.codigo_generico, a.descripcion, a.precio,
+           COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
+    FROM articulos a
+    LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
+    WHERE a.precio > 0 
+    ORDER BY a.id DESC 
+    LIMIT 8
+");
 $stmt->execute();
+
 $articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Obtener productos en oferta (precio_actual < precio_original y código empieza con "KIT")
 // Obtener productos cuyo codigo_generico empieza con 'KIT' y el precio sea mayor a 0
 $stmt_ofertas = $pdo->prepare("
-    SELECT id, codigo_generico, descripcion, ruta_imagen, precio, ordenamiento1, ordenamiento2 
-    FROM articulos 
-    WHERE codigo_generico LIKE 'KIT%' 
-    AND precio > 0
+    SELECT a.id, a.codigo_generico, a.descripcion, a.precio, a.ordenamiento1, a.ordenamiento2,
+           COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
+    FROM articulos a
+    LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
+    WHERE a.codigo_generico LIKE 'KIT%' 
+    AND a.precio > 0
 ");
+
 $stmt_ofertas->execute();
 $ofertas = $stmt_ofertas->fetchAll(PDO::FETCH_ASSOC);
 

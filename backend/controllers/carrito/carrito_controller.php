@@ -86,36 +86,40 @@ class CarritoController {
     }
 
     // ✅ Obtener los artículos del carrito con su estado
-  // ✅ Obtener los artículos del carrito con su cantidad
-public function obtenerCarrito() {
-    $carritoId = $this->obtenerCarritoId();
-
-    $stmt = $this->pdo->prepare("
-        SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, a.ruta_imagen, cd.estado 
-        FROM carrito_detalle cd
-        JOIN articulos a ON cd.idArticulo = a.id
-        WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
-    ");
-    $stmt->execute([$carritoId]);
-    $articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    echo json_encode($articulos); // 🔹 Devuelve solo los artículos pendientes en JSON
-}
-
+    public function obtenerCarrito() {
+        $carritoId = $this->obtenerCarritoId();
+    
+        $stmt = $this->pdo->prepare("
+            SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, cd.estado,
+                   COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
+            FROM carrito_detalle cd
+            JOIN articulos a ON cd.idArticulo = a.id
+            LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
+            WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
+        ");
+        $stmt->execute([$carritoId]);
+        $articulos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        echo json_encode($articulos);
+    }
+    
 
 // ✅ Nueva función que devuelve el carrito en un array sin imprimir JSON
 public function obtenerCarritoArray() {
     $carritoId = $this->obtenerCarritoId();
 
     $stmt = $this->pdo->prepare("
-        SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, a.ruta_imagen, cd.estado 
+        SELECT cd.idArticulo, a.descripcion, a.precio, cd.cantidad, cd.estado,
+               COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen
         FROM carrito_detalle cd
         JOIN articulos a ON cd.idArticulo = a.id
+        LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
         WHERE cd.idCarrito = ? AND cd.estado = 'pendiente'
     ");
     $stmt->execute([$carritoId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 public function finalizarCompra() {
     try {

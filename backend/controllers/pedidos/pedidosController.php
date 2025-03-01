@@ -28,20 +28,22 @@ class PedidoController {
                     p.total,
                     pd.idArticulo,
                     a.descripcion,
-                      a.ruta_imagen, -- Se agrega el campo de la imagen
+                    COALESCE(i.ruta_imagen, 'assets/imagenes/articulos/default.png') AS ruta_imagen,
                     pd.cantidad AS cantidadPedida,
                     a.precio AS precioUnitario,
                     (pd.cantidad * a.precio) AS subtotal
                 FROM pedido_detalle pd
                 JOIN pedidos p ON pd.idPedido = p.id
                 JOIN articulos a ON pd.idArticulo = a.id
+                LEFT JOIN imagenes_articulos i ON a.codigo_generico = i.codigo_generico
                 WHERE p.id = :idPedido AND p.idUsuario = :idUsuario";
-
+    
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(":idPedido", $idPedido, PDO::PARAM_INT);
         $stmt->bindParam(":idUsuario", $idUsuario, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
 }
 ?>
